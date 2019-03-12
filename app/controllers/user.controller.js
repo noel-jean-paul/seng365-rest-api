@@ -1,12 +1,18 @@
+'use strict';
+
 const User = require('../models/user.model');
 
-exports.register = (req, res) => {
-    User.insert(req.body.username, req.body, req.body.givenName, req.body.familyName,
-        req.body.email, req.body.password)
-        .then((result) => {
-            res.status(201).send(result);
+exports.register = async (req, res) => {
+    User.insert(req.body)
+        .then((userId) => {
+            console.log('Success');
+            //res.statusMessage('Created');
+            return res.status(201)
+                .json( {"userId": userId} );
         })
         .catch((err) => {
-            res.json(err);
+            console.log('Error: ' + err);
+            return res.status(400)
+                .send();
         });
 };
