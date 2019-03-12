@@ -22,7 +22,7 @@ module.exports = function () {
 
     // DEBUG (you can remove this)
     app.get('/', function (req, res) {
-        res.send({ 'message': 'Hello World!' })
+        res.send({ 'message': 'Hello nbi21!' })
     });
 
     return app;
