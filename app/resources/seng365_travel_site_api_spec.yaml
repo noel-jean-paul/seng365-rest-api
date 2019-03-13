@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: "SENG365 2019: Travel Site API"
   version: 1.0.0
-  description: "This specification documents the API that must be implemented for Assignment One. \n\nThe API provides all of the server-side functionality necessary in order to implement the user stories for Assignment Two."
+  description: "This specification documents the API that must be implemented for Assignment One. \n\nThe API provides all of the server-side functionality necessary in order to implement the user.js stories for Assignment Two."
 servers:
   - url: http://csse-s365.canterbury.ac.nz:4001/api/v1
     description: reference server
@@ -19,10 +19,10 @@ tags:
     description: Endpoints for retrieving and posting reviews.
     
   - name: users
-    description: Endpoints for registering, logging in, and retrieving/modifying user information.
+    description: Endpoints for registering, logging in, and retrieving/modifying user.js information.
     
   - name: users.photos
-    description: Endpoints for retrieving, uploading and deleting user profile photos.
+    description: Endpoints for retrieving, uploading and deleting user.js profile photos.
 
   - name: backdoor
     description: Development-only endpoints for resetting/resampling the database.
@@ -35,7 +35,7 @@ paths:
       tags:
         - venues
       summary: View venues.
-      description: The `distance` field (from the user\'s location to the venue) is only included in the results when `myLatitude` and `myLongitude` parameters are provided.
+      description: The `distance` field (from the user.js\'s location to the venue) is only included in the results when `myLatitude` and `myLongitude` parameters are provided.
       parameters:
         - in: query
           name: startIndex
@@ -74,7 +74,7 @@ paths:
             $ref: '#/components/schemas/VenueSearchRequest/properties/maxCostRating'
         - in: query
           name: adminId
-          description: Only include Venues that have the given user (id) as their admin.
+          description: Only include Venues that have the given user.js (id) as their admin.
           schema:
             $ref: '#/components/schemas/VenueSearchRequest/properties/adminId'
         - in: query
@@ -89,12 +89,12 @@ paths:
             $ref: '#/components/schemas/VenueSearchRequest/properties/reverseSort'
         - in: query
           name: myLatitude
-          description: The user's latitude, used for calculating the closest venues. Must be accompanied by longitude.
+          description: The user.js's latitude, used for calculating the closest venues. Must be accompanied by longitude.
           schema:
             $ref: '#/components/schemas/VenueSearchRequest/properties/myLatitude'
         - in: query
           name: myLongitude
-          description: The user's longitude, used for calculating the closest venues. Must be accompanied by latitude.
+          description: The user.js's longitude, used for calculating the closest venues. Must be accompanied by latitude.
           schema:
             $ref: '#/components/schemas/VenueSearchRequest/properties/myLatitude'
       responses:
@@ -377,7 +377,7 @@ paths:
       tags:
         - reviews
       summary: Post a review for a venue.
-      description: A user cannot review a venue they're admin of, nor a venue they have previously reviewed.
+      description: A user.js cannot review a venue they're admin of, nor a venue they have previously reviewed.
       security:
         - UserToken: []
       requestBody:
@@ -405,7 +405,7 @@ paths:
   /users/{id}/reviews:
     parameters:
       - name: id
-        description: ID of the user to retrieve.
+        description: ID of the user.js to retrieve.
         in: path
         required: true
         schema:
@@ -413,7 +413,7 @@ paths:
     get:
       tags:
         - reviews
-      summary: Retrieves all the reviews authored by a given user.
+      summary: Retrieves all the reviews authored by a given user.js.
       description: Each review is returned with a brief overview of the venue it is for.
       security:
         - UserToken: []
@@ -434,7 +434,7 @@ paths:
     post:
       tags:
         - users
-      summary: Register as a new user.
+      summary: Register as a new user.js.
       requestBody:
         content:
           application/json:
@@ -473,7 +473,7 @@ paths:
     post:
       tags:
         - users
-      summary: Login as an existing user.
+      summary: Login as an existing user.js.
       description: Either username or email may be used, but one of them must be provided (in addition to a password).
       requestBody:
         content:
@@ -508,7 +508,7 @@ paths:
     post:
       tags:
         - users
-      summary: Logs out the currently authorised user.
+      summary: Logs out the currently authorised user.js.
       security:
         - UserToken: []
       responses:
@@ -520,7 +520,7 @@ paths:
   /users/{id}:
     parameters:
       - name: id
-        description: ID of the user to retrieve.
+        description: ID of the user.js to retrieve.
         in: path
         required: true
         schema:
@@ -528,8 +528,8 @@ paths:
     get:
       tags:
         - users
-      summary: Retrieve information about a user.
-      description: The email field is only included when the currently authenticated user is viewing their **own** details. 
+      summary: Retrieve information about a user.js.
+      description: The email field is only included when the currently authenticated user.js is viewing their **own** details.
       responses:
         200:
           description: OK
@@ -542,8 +542,8 @@ paths:
     patch:
       tags:
         - users
-      summary: Change a user's details.
-      description: Only accessible for the user themselves. 
+      summary: Change a user.js's details.
+      description: Only accessible for the user.js themselves.
       security:
         - UserToken: []
       requestBody:
@@ -573,7 +573,7 @@ paths:
   /users/{id}/photo:
     parameters:
       - name: id
-        description: ID of the user to retrieve.
+        description: ID of the user.js to retrieve.
         in: path
         required: true
         schema:
@@ -581,7 +581,7 @@ paths:
     get:
       tags:
         - users.photos
-      summary: Retrieve a user's profile photo.
+      summary: Retrieve a user.js's profile photo.
       description: The response MIME type will be either `image/png` or `image/jpeg`, depending on the file type of the image being retrieved.
       responses:
         200:
@@ -595,8 +595,8 @@ paths:
     put:
       tags:
         - users.photos
-      summary: Set a user's profile photo.
-      description: Will replace the user's current profile photo if one already exists.
+      summary: Set a user.js's profile photo.
+      description: Will replace the user.js's current profile photo if one already exists.
       requestBody:
         content:
           image/png:
@@ -622,7 +622,7 @@ paths:
     delete:
       tags:
         - users.photos
-      summary: Delete a user's profile photo.
+      summary: Delete a user.js's profile photo.
       responses:
         200:
           description: OK

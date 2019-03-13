@@ -1,9 +1,11 @@
 'use strict';
 
 const db = require('../../config/db');
+const userUtils = require('../utils/user');
 
 exports.insert = async (userData) => {
         const sql = "INSERT INTO User (username, email, given_name, family_name, password) VALUES (?)";
+        userData.password = await userUtils.hashPassword(userData.password);
         const values = [
             [userData.username, userData.email, userData.givenName, userData.familyName,
                 userData.password]

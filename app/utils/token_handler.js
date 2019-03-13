@@ -5,7 +5,7 @@ class TokenHandler {
   login (req, res) {
     let username = req.body.username;
     let password = req.body.password;
-    // For the given username fetch user from DB
+    // For the given username fetch user.js from DB
     let mockedUsername = 'admin';
     let mockedPassword = 'password';
 

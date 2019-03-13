@@ -1,10 +1,10 @@
 'use strict';
 
 const User = require('../models/user.model');
-const validation = require('../utils/validation');
+const userUtils = require('../utils/user');
 
 exports.register = async (req, res) => {
-    if (!validation.validateEmail(req.body.email)) {
+    if (!userUtils.validateEmail(req.body.email)) {
         res.statusMessage = 'Bad Request: data.email should match format "email"';
         return res.status(400)
             .send();
@@ -15,7 +15,7 @@ exports.register = async (req, res) => {
     }
 
     try {
-        let userId = await User.insert(req.body);
+        const userId = await User.insert(req.body);
         res.statusMessage = 'Created';
         return res.status(201)
             .json({"userId": userId});

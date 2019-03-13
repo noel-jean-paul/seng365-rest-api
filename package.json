@@ -11,6 +11,7 @@
     "express": "^4.16.4",
     "mz": "^2.7.0",
     "promise-mysql": "^3.3.1",
-    "jsonwebtoken": "^8.3.0"
+    "jsonwebtoken": "^8.3.0",
+    "bcrypt": "^3.0.0"
   }
 }
