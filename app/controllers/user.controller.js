@@ -1,18 +1,28 @@
 'use strict';
 
 const User = require('../models/user.model');
+const validation = require('../utils/validation');
 
 exports.register = async (req, res) => {
+    if (!validation.validateEmail(req.body.email)) {
+        res.statusMessage = 'Bad Request: data.email should match format "email"';
+        return res.status(400)
+            .send();
+    } else if (req.body.password.length === 0) {
+        res.statusMessage = 'Bad Request: data.password should NOT be shorter than 1 characters';
+        return res.status(400)
+            .send();
+    }
+
     try {
         let userId = await User.insert(req.body);
-        console.log('Success');
         res.statusMessage = 'Created';
-        res.status(201)
-            .json( {"userId": userId} );
+        return res.status(201)
+            .json({"userId": userId});
     } catch (err) {
         if (!err.hasBeenLogged) console.error(err);
-        res.statusMessage = 'Bad Request';
-        res.status(400)
+        res.statusMessage = 'Bad Request: username or email already in use';
+        return res.status(400)
             .send();
     }
 };
