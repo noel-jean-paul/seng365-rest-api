@@ -40,7 +40,9 @@ exports.login = async (userData) => {
     }
 
     if (userUtils.checkPassword(userData.password, result[0].password)) {
-        const token = await userUtils.generateToken(userData.username || userData.email);
+        let token = await userUtils.generateToken(userData.username || userData.email);
+        token = (token.length > 32 ? token.slice(0, 32) : token);    // db auth_token can hold max 32 chars
+        await storeToken(token);
         return {
             "userId": result[0].user_id,
             "token": token
@@ -49,3 +51,8 @@ exports.login = async (userData) => {
         throw new Error('Invalid password')
     }
 };
+
+async function storeToken(token) {
+       const sql = 'UPDATE User set auth_token = (?) where user_id = (?)';
+       return;
+}
