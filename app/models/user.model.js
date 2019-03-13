@@ -13,8 +13,7 @@ exports.insert = async (userData) => {
 
         db.getPool().query(sql, values, (err, result) => {
             if (err) {
-                console.log(err);
-                reject({"ERROR": "Error inserting"});
+                reject(err);
             } else {
                 resolve(result.insertId);
             }
