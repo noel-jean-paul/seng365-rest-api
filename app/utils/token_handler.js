@@ -50,7 +50,6 @@ function main () {
   app.use(bodyParser.urlencoded({ // auth
     extended: true
   }));
-  app.use(bodyParser.json());
   // Routes & Handlers
   app.post('/login', handlers.login);
   app.get('/', auth.checkToken, handlers.index);

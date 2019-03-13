@@ -3,26 +3,24 @@
 const User = require('../models/user.model');
 
 exports.register = async (req, res) => {
-    User.insert(req.body)
-        .then((userId) => {
-            console.log('Success');
-            return res.status(201)
-                .json( {"userId": userId} );
-        })
-        .catch((err) => {
-            console.log(err);
-            return res.status(400)
-                .send();
-        });
+    try {
+        let userId = await User.insert(req.body);
+        console.log('Success');
+        res.statusMessage = 'Created';
+        res.status(201)
+            .json( {"userId": userId} );
+    } catch (err) {
+        if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Bad Request';
+        res.status(400)
+            .send();
+    }
 };
 
 exports.login = async (req, res) => {
-    let token = req.getResponseHeader("x-mstr-authtoken");
-    console.log(token);
-
     if ((req.body.username === undefined && req.body.email === undefined) ||
             req.body.password === undefined) {
-        console.log('missing fields');
+        console.log('Missing fields');
 
         res.status(400)
             .send();
