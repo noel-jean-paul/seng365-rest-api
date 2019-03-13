@@ -20,9 +20,32 @@ exports.insert = async (userData) => {
 };
 
 exports.login = async (userData) => {
-    let token = jwt.sign({username: username},
-        config.secret,
-        { expiresIn: '24h' // expires in 24 hours
-        }
-    );
+    let sql;
+    let values;
+    const baseSql = 'SELECT user_id, password from User where ';
+
+    if (userData.email) {
+        sql = baseSql + 'email = (?)';
+        values = [userData.email];
+    } else {
+        sql = baseSql + 'username = (?)';
+        values = [userData.username];
+    }
+
+    let result;
+    try {
+        result = await db.getPool().query(sql, values);
+    } catch (err) {
+        throw err;
+    }
+
+    if (userUtils.checkPassword(userData.password, result[0].password)) {
+        const token = await userUtils.generateToken(userData.username || userData.email);
+        return {
+            "userId": result[0].user_id,
+            "token": token
+        };
+    } else {
+        throw new Error('Invalid password')
+    }
 };

@@ -16,6 +16,9 @@ module.exports = function () {
     app.use(allowCrossOriginRequests);
     app.use(bodyParser.json());
     app.use(bodyParser.raw({ type: 'text/plain' }));  // for the /executeSql endpoint
+    app.use(bodyParser.urlencoded({ // auth
+        extended: true
+    }));
 
     // ROUTES
     require('../app/routes/backdoor.routes')(app);

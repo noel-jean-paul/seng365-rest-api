@@ -28,25 +28,23 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-    if ((req.body.username === undefined && req.body.email === undefined) ||
-            req.body.password === undefined) {
-        console.log('Missing fields');
+    const failMessage = "Bad Request: invalid username/email/password supplied";
 
-        res.status(400)
+    if ((!req.body.username && !req.body.email) ||
+            !req.body.password) {
+        res.statusMessage = failMessage;
+        return res.status(400)
             .send();
     }
 
-    // User.login(req.body)
-    //     .then((userId, token) => {
-    //         return res.status(200)
-    //             .json({
-    //                 "userId": userId,
-    //                 "token": token
-    //             });
-    //     })
-    //     .catch((err) => {
-    //         console.log(err);
-    //        return res.status(400)
-    //            .send();
-    //     });
+    try {
+        const result = await User.login(req.body);
+        return res.status(200)
+            .json(result);
+    } catch(err) {
+        if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = failMessage;
+        return res.status(400)
+            .send();
+    }
 };
