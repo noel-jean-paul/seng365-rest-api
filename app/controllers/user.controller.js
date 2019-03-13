@@ -39,6 +39,7 @@ exports.login = async (req, res) => {
 
     try {
         const result = await User.login(req.body);
+        res.statusMessage = 'OK';
         return res.status(200)
             .json(result);
     } catch(err) {
@@ -47,4 +48,8 @@ exports.login = async (req, res) => {
         return res.status(400)
             .send();
     }
+};
+
+exports.logout = async (req, res) => {
+
 };
