@@ -40,11 +40,12 @@ exports.login = async (userData) => {
     }
 
     if (userUtils.checkPassword(userData.password, result[0].password)) {
+        let userId = result[0].user_id;
         let token = await userUtils.generateToken(userData.username || userData.email);
         token = (token.length > 32 ? token.slice(0, 32) : token);    // db auth_token can hold max 32 chars
-        await storeToken(token);
+        await storeToken(userId, token);
         return {
-            "userId": result[0].user_id,
+            "userId": userId,
             "token": token
         };
     } else {
@@ -52,7 +53,14 @@ exports.login = async (userData) => {
     }
 };
 
-async function storeToken(token) {
+async function storeToken(userId, token) {
        const sql = 'UPDATE User set auth_token = (?) where user_id = (?)';
-       return;
+       const values = [token, userId];
+
+       try {
+           await db.getPool().query(sql, values);
+       } catch(err) {
+           console.error(err);
+           throw err;
+       }
 }
