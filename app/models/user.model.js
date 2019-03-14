@@ -80,15 +80,46 @@ exports.logout = async () => {
     }
 };
 
+// Return the user_id (as a String) matching the token if valid, null otherwise
 exports.verifyToken = async (token) => {
-    const sql = 'SELECT auth_token from User where auth_token = (?)';
+    const sql = 'SELECT user_id from User where auth_token = (?)';
     const values = [token];
 
     try {
         const rows = await db.getPool().query(sql, values);
-        return rows.length === 1;
+        if (rows.length === 1) {
+            return rows[0].user_id.toString();  // return as string to match with url params
+        } else {
+            return null;
+        }
     } catch(err) {
         console.error(err);
         throw err;
     }
+};
+
+// Check if userId matches the user_id associated with the token
+// Return true if so, false otherwise.
+async function userIsAuthenticated(userId, token) {
+    const authenticatedUser = await exports.verifyToken(token);
+    return authenticatedUser === userId;
+}
+
+exports.getOne = async (userId, token) => {
+   const sql = 'SELECT username, email, given_name, family_name FROM User WHERE user_id = (?)';
+   const values = [userId];
+
+   const rows = await db.getPool().query(sql, values);
+   if (rows.length === 0) {
+       return null;     // bad userId
+   }
+
+   const userData = rows[0];
+   const includeEmail = await userIsAuthenticated(userId, token);
+   if (includeEmail) {
+        return userData;    // includes email
+   } else {
+       delete userData.email;
+        return userData;
+   }
 };

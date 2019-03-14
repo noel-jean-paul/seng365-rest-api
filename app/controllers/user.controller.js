@@ -50,13 +50,30 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.logout = async (req, res, token) => {
+exports.logout = async (req, res) => {
     console.log('logging out');
     try {
-        await User.logout(token);
+        await User.logout();
         res.statusMessage = "OK";
         res.status(200)
             .send();
+    } catch(err) {
+        if (!err.hasBeenLogged) console.error(err);
+    }
+};
+
+exports.retrieve = async (req, res) => {
+    try {
+        const userData = await User.getOne(req.params.userId, req.headers['x-authorization']);
+        if (userData) {
+            res.statusMessage = 'OK';
+            return res.status(200)
+                .json(userData);
+        } else {
+            res.statusMessage = 'Not Found';
+            return res.status(404)
+                .send();
+        }
     } catch(err) {
         if (!err.hasBeenLogged) console.error(err);
     }

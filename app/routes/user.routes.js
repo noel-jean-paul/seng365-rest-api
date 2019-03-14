@@ -12,4 +12,7 @@ module.exports = (app) => {
 
     app.route(app.rootUrl + '/users/logout')
         .post(auth.checkToken, users.logout);
+
+    app.route(app.rootUrl + '/users/:userId')
+        .get(users.retrieve);
 };
