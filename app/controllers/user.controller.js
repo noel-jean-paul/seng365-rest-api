@@ -44,7 +44,7 @@ exports.login = async (req, res) => {
             .json(result);
     } catch(err) {
         if (!err.hasBeenLogged) console.error(err);
-        res.statusMessage = failMessage;
+        res.statusMessage = err;
         return res.status(400)
             .send();
     }
@@ -76,5 +76,13 @@ exports.retrieve = async (req, res) => {
         }
     } catch(err) {
         if (!err.hasBeenLogged) console.error(err);
+    }
+};
+
+exports.alter = async (req, res) => {
+    try {
+        await User.update(req.params.userId);
+    } catch {
+
     }
 };

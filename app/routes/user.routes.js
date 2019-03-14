@@ -15,4 +15,7 @@ module.exports = (app) => {
 
     app.route(app.rootUrl + '/users/:userId')
         .get(users.retrieve);
+
+    app.route(app.rootUrl + '/users/:userId')
+        .patch(auth.checkToken, users.alter);
 };

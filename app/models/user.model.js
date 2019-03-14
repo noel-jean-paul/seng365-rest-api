@@ -123,3 +123,7 @@ exports.getOne = async (userId, token) => {
         return userData;
    }
 };
+
+exports.update = async (userId) => {
+
+};
