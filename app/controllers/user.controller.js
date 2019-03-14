@@ -44,7 +44,7 @@ exports.login = async (req, res) => {
             .json(result);
     } catch(err) {
         if (!err.hasBeenLogged) console.error(err);
-        res.statusMessage = err;
+        res.statusMessage = failMessage;
         return res.status(400)
             .send();
     }

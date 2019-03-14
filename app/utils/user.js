@@ -17,12 +17,11 @@ exports.checkPassword = async function(plaintextPassword, hashedPassword) {
       return await bcrypt.compare(plaintextPassword, hashedPassword);
   } catch(err) {
       console.error(err);
-      throw err;
   }
 };
 
 exports.generateToken = async function(key) {
-    return jwt.sign({username: key}, process.env.SECRET);
+    return jwt.sign({username: key}, 'tutorial');   // not in secret as gitlab can't find the variable
 };
 
 //
@@ -45,15 +44,18 @@ function validateGeneric(attribute) {
     return null;
 }
 
-// exports.validateAllBasicAttributes = (user) => {
-//     const keys = Object.kets
-//     const attributes = [user.givenName, user.familyName, user.password];
-//     for (const attribute of attributes) {
-//         const error = validateGeneric(attribute);
-//         if (error) {
-//             break;
-//         }
-//     }
-//
-//     return
-// };
+exports.validateAllBasicAttributes = (user) => {
+    const keys = Object.keys(user);
+    const keysToValidate = ["firstName", "familyName", "password"];
+
+    let currentKey = null;
+    for (const key of keys) {
+        if (keysToValidate.includes(key)) {
+            const error = validateGeneric(user[key]);
+            if (error) {
+                break;
+            }
+        }
+    }
+    return currentKey + ' ' + error;
+};
