@@ -50,6 +50,14 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.logout = async (req, res) => {
-
+exports.logout = async (req, res, token) => {
+    console.log('logging out');
+    try {
+        await User.logout(token);
+        res.statusMessage = "OK";
+        res.status(200)
+            .send();
+    } catch(err) {
+        if (!err.hasBeenLogged) console.error(err);
+    }
 };

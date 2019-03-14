@@ -40,6 +40,9 @@ exports.login = async (userData) => {
     }
 
     if (userUtils.checkPassword(userData.password, result[0].password)) {
+        // Clear current token
+        await exports.logout();
+
         let userId = result[0].user_id;
         let token = await userUtils.generateToken(userData.username || userData.email);
         token = (token.length > 32 ? token.slice(0, 32) : token);    // db auth_token can hold max 32 chars
@@ -64,3 +67,28 @@ async function storeToken(userId, token) {
            throw err;
        }
 }
+
+exports.logout = async () => {
+    // remove all auth tokens - need to clear current on login - easier to clear all than find current and then clear
+    const sql = 'UPDATE User set auth_token = null';
+
+    try {
+        await db.getPool().query(sql);
+    } catch(err) {
+        console.error(err);
+        throw err;
+    }
+};
+
+exports.verifyToken = async (token) => {
+    const sql = 'SELECT auth_token from User where auth_token = (?)';
+    const values = [token];
+
+    try {
+        const rows = await db.getPool().query(sql, values);
+        return rows.length === 1;
+    } catch(err) {
+        console.error(err);
+        throw err;
+    }
+};
