@@ -2,6 +2,7 @@
 
 const User = require('../models/user.model');
 const userUtils = require('../utils/user');
+const auth = require('../utils/auth');
 
 exports.register = async (req, res) => {
     if (!userUtils.validateEmail(req.body.email)) {
@@ -59,6 +60,9 @@ exports.logout = async (req, res) => {
             .send();
     } catch(err) {
         if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Internal server error';
+        return res.status(500)
+            .send();
     }
 };
 
@@ -76,13 +80,40 @@ exports.retrieve = async (req, res) => {
         }
     } catch(err) {
         if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Internal server error';
+        return res.status(500)
+            .send();
     }
 };
 
 exports.alter = async (req, res) => {
     try {
-        await User.update(req.params.userId);
-    } catch {
+        // validate data
+        const errorMsg = userUtils.validateAttributes(req.body,
+            ["firstName", "lastName", "password"]);
+        if (errorMsg) {
+            res.statusMessage = "Bad Request: " + errorMsg;
+            return res.status(400)
+                .send();
+        } else if (!User.checkUserExists(req.params.userId)) {
+            console.log('user does not exist');
+            res.statusMessage = 'Not Found';
+            return res.status(404)
+                .send();
+        } else if (req.params.userId !== auth.getAuthenticatedUserId()) {
+            res.statusMessage = 'Forbidden';
+            return res.status(403)
+                .send();
+        }
 
+        const result = await User.update(req.params.userId, req.body);
+        res.statusMessage = 'OK';
+        return res.status(200)
+            .send();
+    } catch(err) {
+        if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Internal server error';
+        return res.status(500)
+            .send();
     }
 };
