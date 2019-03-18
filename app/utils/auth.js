@@ -13,7 +13,7 @@ exports.getAuthenticatedUserId = () => {
     return authenticatedUserId;
 };
 
-exports.checkToken = async (req, res, next, authRequired = true) => {
+exports.checkToken = async (req, res, next, authRequired=true) => {
     const token = req.headers['x-authorization']; // Express headers are auto converted to lowercase
     const userId = await User.verifyToken(token);   // check that token is authentic
     if (userId) {

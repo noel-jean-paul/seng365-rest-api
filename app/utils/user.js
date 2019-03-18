@@ -49,7 +49,7 @@ function validateGeneric(key, value, required) {
 // Can handle keys being passed that aren't in object
 // allRequired indicates that if a key in keysToValidate is missing from user then an error should
 // be returned
-exports.validateAttributes = (user, keysToValidate, allRequired) => {
+exports.validateAttributes = (user, keysToValidate, allRequired=true) => {
     // no attributes is a bad request
     if (Object.entries(user).length === 0 && user.constructor === Object) {
         return 'no fields supplied';
