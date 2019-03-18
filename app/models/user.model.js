@@ -89,20 +89,23 @@ exports.login = async (userData) => {
         throw err;
     }
 
-    if (userUtils.checkPassword(userData.password, result[0].password)) {
-        // Clear current token
-        await exports.logout();
+    if (result[0]) {
+        let validPassword = await userUtils.checkPassword(userData.password, result[0].password);
+        if (validPassword) {
+            // Clear current token
+            await exports.logout();
 
-        let userId = result[0].user_id;
-        let token = await auth.generateToken(userData.username || userData.email);
-        token = (token.length > 32 ? token.slice(0, 32) : token);    // db auth_token can hold max 32 chars
-        await storeToken(userId, token);
-        return {
-            "userId": userId,
-            "token": token
-        };
-    } else {
-        throw new Error('Invalid password')
+            let userId = result[0].user_id;
+            let token = await auth.generateToken(userData.username || userData.email);
+            token = (token.length > 32 ? token.slice(0, 32) : token);    // db auth_token can hold max 32 chars
+            await storeToken(userId, token);
+            return {
+                "userId": userId,
+                "token": token
+            };
+        } else {
+            throw new Error('Incorrect password');
+        }
     }
 };
 
