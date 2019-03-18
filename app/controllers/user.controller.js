@@ -106,7 +106,7 @@ exports.alter = async (req, res) => {
     try {
         // validate data
         const errorMsg = userUtils.validateAttributes(req.body,
-            ["firstName", "lastName", "password"]);
+            ["givenName", "familyName", "password"]);
         if (errorMsg) {
             res.statusMessage = "Bad Request: " + errorMsg;
             return res.status(400)

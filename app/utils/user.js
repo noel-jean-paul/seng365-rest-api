@@ -53,7 +53,7 @@ exports.validateAttributes = (user, keysToValidate) => {
         return 'no fields supplied';
     }
 
-    const keys = ['username', 'email', 'password', 'firstName', 'lastName'];
+    const keys = ['username', 'email', 'password', 'givenName', 'familyName'];
     keysToValidate = keysToValidate || keys;
 
     let error = null;

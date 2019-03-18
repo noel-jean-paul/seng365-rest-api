@@ -155,12 +155,12 @@ exports.getOne = async (userId) => {
 // return true on success, false if no update occurred
 exports.update = async (userId, user) => {
     const keyMap = [{
-        key: "firstName",
-        sqlKey: "first_name"
+        key: "givenName",
+        sqlKey: "given_name"
     },
         {
-            key: "lastName",
-            sqlKey: "last_name"
+            key: "familyName",
+            sqlKey: "family_name"
         },
         {
             key: "password",
