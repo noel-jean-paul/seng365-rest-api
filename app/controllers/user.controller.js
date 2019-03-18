@@ -52,7 +52,6 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
-    console.log('logging out');
     try {
         await User.logout();
         res.statusMessage = "OK";

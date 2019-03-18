@@ -92,9 +92,6 @@ exports.login = async (userData) => {
     if (result[0]) {
         let validPassword = await userUtils.checkPassword(userData.password, result[0].password);
         if (validPassword) {
-            // Clear current token
-            await exports.logout();
-
             let userId = result[0].user_id;
             let token = await auth.generateToken(userData.username || userData.email);
             token = (token.length > 32 ? token.slice(0, 32) : token);    // db auth_token can hold max 32 chars
@@ -111,10 +108,10 @@ exports.login = async (userData) => {
 
 exports.logout = async () => {
     // remove all auth tokens - need to clear current on login - easier to clear all than find current and then clear
-    const sql = 'UPDATE User set auth_token = null';
-
+    const sql = 'UPDATE User set auth_token = null WHERE user_id = (?)';
+    const values = [auth.getAuthenticatedUserId()];
     try {
-        await db.getPool().query(sql);
+        await db.getPool().query(sql, values);
     } catch(err) {
         console.error(err);
         throw err;
