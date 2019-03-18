@@ -24,6 +24,7 @@ exports.checkToken = async (req, res, next, authRequired=true) => {
         res.status(401)
             .send();
     } else {
+        authenticatedUserId = null; // clear authenticated user
         next();
     }
 };
