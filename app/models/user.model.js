@@ -89,7 +89,7 @@ exports.login = async (userData) => {
         throw err;
     }
 
-    if (result[0]) {
+    if (result.length === 1) {
         let validPassword = await userUtils.checkPassword(userData.password, result[0].password);
         if (validPassword) {
             let userId = result[0].user_id;
@@ -103,6 +103,8 @@ exports.login = async (userData) => {
         } else {
             throw new Error('Incorrect password');
         }
+    } else {
+        throw new Error('Username or password does not exist');
     }
 };
 
