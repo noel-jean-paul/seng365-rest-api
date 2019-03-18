@@ -14,8 +14,6 @@ module.exports = (app) => {
         .post(auth.checkToken, users.logout);
 
     app.route(app.rootUrl + '/users/:userId')
-        .get(users.retrieve);
-
-    app.route(app.rootUrl + '/users/:userId')
+        .get(auth.checkToken, users.retrieve)
         .patch(auth.checkToken, users.alter);
 };
