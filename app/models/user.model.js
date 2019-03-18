@@ -94,7 +94,6 @@ exports.login = async (userData) => {
         if (validPassword) {
             let userId = result[0].user_id;
             let token = await auth.generateToken(userData.username || userData.email);
-            token = (token.length > 32 ? token.slice(0, 32) : token);    // db auth_token can hold max 32 chars
             await storeToken(userId, token);
             return {
                 "userId": userId,

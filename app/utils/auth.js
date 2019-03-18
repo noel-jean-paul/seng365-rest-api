@@ -4,7 +4,9 @@ const jwt = require('jsonwebtoken');
 let authenticatedUserId;
 
 exports.generateToken = async function(key) {
-    return jwt.sign({username: key}, 'tutorial');   // not in secret as gitlab can't find the variable
+    let token = jwt.sign({username: key}, 'tutorial');   // not in secret as gitlab can't find the variable
+    token = (token.length > 32 ? token.slice(-32, -1) : token);    // db auth_token can hold max 32 chars
+    return token;
 };
 
 exports.getAuthenticatedUserId = () => {
