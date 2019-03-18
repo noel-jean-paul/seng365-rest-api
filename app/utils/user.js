@@ -32,15 +32,17 @@ exports.validateEmail = function (email) {
     return re.test(email.toLowerCase());
 };
 
-function validateGeneric(attribute) {
-    if (attribute !== undefined) {
-        if (typeof attribute !== 'string') {
-            return 'should be a string';
-        } else if (attribute.length < 1) {
-            return ' should NOT be shorter than 1 characters';
+function validateGeneric(key, value) {
+    console.log(key, value);
+    if (value !== undefined) {
+        if (typeof value !== 'string') {
+            return `'${key}' should be a string`;
+        } else if (value.length < 1) {
+            return `'${key}' should NOT be shorter than 1 characters`;
         }
+    } else {
+        return `data should have required property '${key}'`
     }
-    return null;
 }
 
 // Return null if all valid or error message otherwise
@@ -51,19 +53,19 @@ exports.validateAttributes = (user, keysToValidate) => {
         return 'no fields supplied';
     }
 
-    const keys = Object.keys(user);
-    keysToValidate = keysToValidate || ["firstName", "familyName", "password"]; // default
+    const keys = ['username', 'email', 'password', 'firstName', 'lastName'];
+    keysToValidate = keysToValidate || keys;
 
-    let error = '';
-    let errorKey = null;
+    let error = null;
     for (const key of keys) {
         if (keysToValidate.includes(key)) {
-            error = validateGeneric(user[key]);
+            console.log('validate generic');
+            error = validateGeneric(key, user[key]);
             if (error) {
-                errorKey = key;
                 break;
             }
         }
     }
-    return (error ? errorKey + ' ' + error : null);
+    console.log('error is: ' + error);
+    return error;
 };

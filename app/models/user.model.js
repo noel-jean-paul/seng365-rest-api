@@ -33,6 +33,10 @@ exports.verifyToken = async (token) => {
     }
 };
 
+exports.emailAndUsernameUnique = async (username, email) => {
+    return await attributeUnique('email', email) && await attributeUnique('username', username)
+};
+
 
 //
 // Internal helper functions
@@ -47,6 +51,17 @@ async function storeToken(userId, token) {
         console.error(err);
         throw err;
     }
+}
+
+// Return true if attribute unique in db, false otherwise
+// DOES NOT HANDLE ATTRIBUTES WHICH ARE NAMED DIFFERENTLY IN DB TO REQUESTS
+async function attributeUnique(key, value) {
+    const baseSql = 'SELECT user_id from User WHERE ';
+    const sql = key + ' = (?)';
+    const values = [value];
+
+    const rows = await db.getPool().query(baseSql + sql, values);
+    return rows.length === 0;
 }
 
 //

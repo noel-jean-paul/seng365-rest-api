@@ -5,12 +5,21 @@ const userUtils = require('../utils/user');
 const auth = require('../utils/auth');
 
 exports.register = async (req, res) => {
-    if (!userUtils.validateEmail(req.body.email)) {
+    console.log('-----Register user endpoint------');
+
+    // Validate incoming data
+    const errorMsg = userUtils.validateAttributes(req.body);
+    console.log(errorMsg);
+    if (errorMsg) {
+        res.statusMessage = "Bad Request: " + errorMsg;
+        return res.status(400)
+            .send();
+    } else if (!userUtils.validateEmail(req.body.email)) {
         res.statusMessage = 'Bad Request: data.email should match format "email"';
         return res.status(400)
             .send();
-    } else if (req.body.password.length === 0) {
-        res.statusMessage = 'Bad Request: data.password should NOT be shorter than 1 characters';
+    } else if (! await User.emailAndUsernameUnique(req.body.username, req.body.email)) {
+        res.statusMessage = 'Bad Request: username or email already in use';
         return res.status(400)
             .send();
     }
@@ -22,13 +31,15 @@ exports.register = async (req, res) => {
             .json({"userId": userId});
     } catch (err) {
         if (!err.hasBeenLogged) console.error(err);
-        res.statusMessage = 'Bad Request: username or email already in use';
-        return res.status(400)
+        res.statusMessage = 'Internal server error';
+        return res.status(500)
             .send();
     }
 };
 
 exports.login = async (req, res) => {
+    console.log('-----Login endpoint------');
+
     const failMessage = "Bad Request: invalid username/email/password supplied";
 
     if ((!req.body.username && !req.body.email) ||
@@ -52,6 +63,8 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
+    console.log('-----Logout endpoint------');
+
     try {
         await User.logout();
         res.statusMessage = "OK";
@@ -66,6 +79,8 @@ exports.logout = async (req, res) => {
 };
 
 exports.retrieve = async (req, res) => {
+    console.log('-----Get user endpoint------');
+
     try {
         const userData = await User.getOne(req.params.userId, req.headers['x-authorization']);
         if (userData) {
@@ -86,6 +101,8 @@ exports.retrieve = async (req, res) => {
 };
 
 exports.alter = async (req, res) => {
+    console.log('-----Update user endpoint------');
+
     try {
         // validate data
         const errorMsg = userUtils.validateAttributes(req.body,
