@@ -32,28 +32,31 @@ exports.validateEmail = function (email) {
     return re.test(email.toLowerCase());
 };
 
-function validateGeneric(key, value) {
+function validateGeneric(key, value, required) {
     if (value !== undefined) {
         if (typeof value !== 'string') {
             return `'${key}' should be a string`;
         } else if (value.length < 1) {
             return `'${key}' should NOT be shorter than 1 characters`;
         }
-    } else {
+    } else if (required) {
         return `data should have required property '${key}'`
     }
+    return null;
 }
 
 // Return null if all valid or error message otherwise
 // Can handle keys being passed that aren't in object
-exports.validateAttributes = (user, keysToValidate) => {
+// allRequired indicates that if a key in keysToValidate is missing from user then an error should
+// be returned
+exports.validateAttributes = (user, keysToValidate, allRequired) => {
     const keys = ['username', 'email', 'password', 'givenName', 'familyName'];
     keysToValidate = keysToValidate || keys;
 
     let error = null;
     for (const key of keys) {
         if (keysToValidate.includes(key)) {
-            error = validateGeneric(key, user[key]);
+            error = validateGeneric(key, user[key], allRequired);
             if (error) {
                 break;
             }

@@ -9,7 +9,6 @@ exports.register = async (req, res) => {
 
     // Validate incoming data
     const errorMsg = userUtils.validateAttributes(req.body);
-    console.log(errorMsg);
     if (errorMsg) {
         res.statusMessage = "Bad Request: " + errorMsg;
         return res.status(400)
@@ -103,26 +102,25 @@ exports.retrieve = async (req, res) => {
 exports.alter = async (req, res) => {
     console.log('-----Update user endpoint------');
 
-    try {
-        // validate data
-        const errorMsg = userUtils.validateAttributes(req.body,
-            ["givenName", "familyName", "password"]);
-        if (errorMsg) {
-            res.statusMessage = "Bad Request: " + errorMsg;
-            return res.status(400)
-                .send();
-        } else if (!User.checkUserExists(req.params.userId)) {
-            console.log('user does not exist');
-            res.statusMessage = 'Not Found';
-            return res.status(404)
-                .send();
-        } else if (req.params.userId !== auth.getAuthenticatedUserId()) {
-            res.statusMessage = 'Forbidden';
-            return res.status(403)
-                .send();
-        }
+    // validate data
+    const errorMsg = userUtils.validateAttributes(req.body,
+        ["givenName", "familyName", "password"], false);    // Do not require all of these attributes
+    if (errorMsg) {
+        res.statusMessage = "Bad Request: " + errorMsg;
+        return res.status(400)
+            .send();
+    } else if (! await User.checkUserExists(req.params.userId)) {
+        res.statusMessage = 'Not Found';
+        return res.status(404)
+            .send();
+    } else if (req.params.userId !== auth.getAuthenticatedUserId()) {
+        res.statusMessage = 'Forbidden';
+        return res.status(403)
+            .send();
+    }
 
-        const result = await User.update(req.params.userId, req.body);
+    try {
+        await User.update(req.params.userId, req.body);
         res.statusMessage = 'OK';
         return res.status(200)
             .send();

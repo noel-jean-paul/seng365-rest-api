@@ -11,7 +11,6 @@ exports.checkUserExists = async (userId) => {
     const values = [userId];
 
     const rows = await db.getPool().query(sql, values);
-    console.log('checking rows=', rows);
     return rows.length === 1;
 };
 
@@ -173,20 +172,19 @@ exports.update = async (userId, user) => {
 
     for (let keyObj of keyMap) {
         if (Object.keys(user).includes(keyObj.key)) {
-            updates += keyObj.sqlKey + ' = (?) ';
+            updates += keyObj.sqlKey + ' = (?), ';
             values.push(user[keyObj.key]);
         }
     }
+    updates = updates.slice(0, -2);
 
-    const sql = 'UPDATE User SET  ' + updates + 'WHERE user_id = (?)';
+    const sql = 'UPDATE User SET ' + updates + ' WHERE user_id = (?)';
     values.push(userId);
 
 
     try {
-        const result = await db.getPool().query(sql, values);
-        return result.affectedRows === 1;
+        await db.getPool().query(sql, values);
     } catch(err) {
         throw err;
     }
 };
-
