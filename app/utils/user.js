@@ -33,7 +33,6 @@ exports.validateEmail = function (email) {
 };
 
 function validateGeneric(key, value) {
-    console.log(key, value);
     if (value !== undefined) {
         if (typeof value !== 'string') {
             return `'${key}' should be a string`;
@@ -48,24 +47,17 @@ function validateGeneric(key, value) {
 // Return null if all valid or error message otherwise
 // Can handle keys being passed that aren't in object
 exports.validateAttributes = (user, keysToValidate) => {
-    // no attributes is a bad request
-    if (Object.entries(user).length === 0 && user.constructor === Object) {
-        return 'no fields supplied';
-    }
-
     const keys = ['username', 'email', 'password', 'givenName', 'familyName'];
     keysToValidate = keysToValidate || keys;
 
     let error = null;
     for (const key of keys) {
         if (keysToValidate.includes(key)) {
-            console.log('validate generic');
             error = validateGeneric(key, user[key]);
             if (error) {
                 break;
             }
         }
     }
-    console.log('error is: ' + error);
     return error;
 };
