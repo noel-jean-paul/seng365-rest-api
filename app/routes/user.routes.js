@@ -11,9 +11,11 @@ module.exports = (app) => {
         .post(users.login);
 
     app.route(app.rootUrl + '/users/logout')
+
         .post(auth.checkToken, users.logout);
 
     app.route(app.rootUrl + '/users/:userId')
-        .get(auth.checkToken, users.retrieve)
+        .get((req, res, next) => { auth.checkToken(req, res, next,false) },
+            users.retrieve)    // auth not always required
         .patch(auth.checkToken, users.alter);
 };

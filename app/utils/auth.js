@@ -13,15 +13,19 @@ exports.getAuthenticatedUserId = () => {
     return authenticatedUserId;
 };
 
-exports.checkToken = async (req, res, next) => {
+exports.checkToken = async (req, res, next, authRequired = true) => {
     const token = req.headers['x-authorization']; // Express headers are auto converted to lowercase
+    console.log(token);
     const userId = await User.verifyToken(token);   // check that token is authentic
+    console.log('userId:', userId);
     if (userId) {
         authenticatedUserId = userId;
         next();    // pass control to the next controller function
-    } else {
+    } else if (authRequired) {  // some funcions do not require user authentication
         res.statusMessage = 'Unauthorized';
         res.status(401)
             .send();
+    } else {
+        next();
     }
 };
