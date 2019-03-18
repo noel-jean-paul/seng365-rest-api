@@ -142,11 +142,18 @@ exports.getOne = async (userId) => {
        return null;     // bad userId
    }
 
-   const userData = rows[0];
+   let userData = rows[0];
+   // transform from db names to normal names
+   userData = {
+       username: userData.username,
+       email: userData.email,
+       givenName: userData.given_name,
+       familyName: userData.family_name
+   };
    if (auth.getAuthenticatedUserId() === userId) {
         return userData;    // includes email
    } else {
-       delete userData.email;
+        delete userData.email;
         return userData;
    }
 };
