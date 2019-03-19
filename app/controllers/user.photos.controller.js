@@ -3,7 +3,6 @@
 const UserPhotos = require('../models/user.photos.model');
 const User = require('../models/user.model');
 
-const userPhotoUtils = require('../utils/user.photos');
 const auth = require('../utils/auth');
 
 const fs = require('fs');
@@ -18,15 +17,20 @@ exports.retrieve = async (req, res) => {
     const path = `${basePath}${req.params.userId}`;
 
     // Validation
+    console.log(path);
+    console.log('Exists:', fs.existsSync(path));
     if (!fs.existsSync(path)) {     // Covers userId not existing and user not having a photo
+        console.log('in the 404 if');
         res.statusMessage = 'Not Found';
         return res.status(404)
             .send();
     }
 
     try {
+        console.log('reading');
         const buffer = fs.readFileSync(path);
         const type = fileType(buffer).mime;
+        console.log('buffer:', buffer, 'type', type);
         res.statusMessage = 'OK';
         res.contentType(type);
         res.status(200)
