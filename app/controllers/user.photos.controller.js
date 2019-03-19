@@ -15,11 +15,13 @@ exports.retrieve = async (req, res) => {
 };
 
 exports.set = async (req, res) => {
+    console.log('--------Put user photo endpoint--------');
+
     const image = req.body;
     const userId = req.params.userId;
 
     // Validation
-    if (!User.checkUserExists(userId)) {
+    if (! await User.checkUserExists(userId)) {
         res.statusMessage = 'Not Found';
         return res.status(404)
             .send();
