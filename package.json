@@ -12,6 +12,7 @@
     "mz": "^2.7.0",
     "promise-mysql": "^3.3.1",
     "jsonwebtoken": "^8.3.0",
-    "bcrypt": "^3.0.0"
+    "bcrypt": "^3.0.0",
+    "file-type": "^10.9.0"
   }
 }

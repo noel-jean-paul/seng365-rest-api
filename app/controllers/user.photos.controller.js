@@ -2,10 +2,12 @@
 
 const UserPhotos = require('../models/user.photos.model');
 const User = require('../models/user.model');
-const userPhotoUtils = require('../utils/user.photos');
 
+const userPhotoUtils = require('../utils/user.photos');
 const auth = require('../utils/auth');
+
 const fs = require('fs');
+const fileType = require('file-type');
 
 const basePath = 'app/assets/users/photos/';
 
@@ -23,11 +25,13 @@ exports.retrieve = async (req, res) => {
     }
 
     try {
-        const image = fs.readFileSync(path);
-        console.log('image', image);
+        const buffer = fs.readFileSync(path);
+        const type = fileType(buffer).mime;
         res.statusMessage = 'OK';
+        res.contentType(type);
         res.status(200)
-            .send(image);
+            .send(buffer);
+
     } catch (err) {
         if (!err.hasBeenLogged) console.error(err);
         res.statusMessage = 'Internal Server Error';
