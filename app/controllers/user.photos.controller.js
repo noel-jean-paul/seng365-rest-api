@@ -50,6 +50,8 @@ exports.set = async (req, res) => {
     const image = req.body;
     const userId = req.params.userId;
 
+    console.log('userId is', userId);
+
     // Validation
     if (! await User.checkUserExists(userId)) {
         res.statusMessage = 'Not Found';
@@ -81,6 +83,7 @@ exports.set = async (req, res) => {
     try {
         fs.writeFileSync(path, image);
         // save the filepath in the database
+        console.log('saved image for userId ', userId, 'at path', path);
         res.send();
     } catch(err) {
         if (!err.hasBeenLogged) console.error(err);
