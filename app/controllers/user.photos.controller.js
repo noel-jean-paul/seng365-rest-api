@@ -55,10 +55,13 @@ exports.set = async (req, res) => {
         res.statusMessage = "Forbidden";
         return res.status(403)
             .send();
-    } else if (!image) {
-        res.statusMessage = 'Bad Request';
-        return res.status(400)
-            .send();
+    } else if (image) { // Check that a png or jpeg has been included in the request
+        const imgType = fileType(image) ? fileType(image).ext : '';
+        if (imgType !== 'jpg' && imgType !== 'png') {   // fileType give jpg not jpeg
+            res.statusMessage = 'Bad Request';
+            return res.status(400)
+                .send();
+        }
     }
 
     // save photo
@@ -84,5 +87,18 @@ exports.set = async (req, res) => {
 };
 
 exports.remove = async (req, res) => {
+    console.log('--------PUT user photo endpoint--------');
 
-};
+    const userId = req.params.userId;
+
+    // Validation
+    if (!await User.checkUserExists(userId)) {
+        res.statusMessage = 'Not Found';
+        return res.status(404)
+            .send();
+    } else if (userId !== auth.getAuthenticatedUserId()) {
+        res.statusMessage = "Forbidden";
+        return res.status(403)
+            .send();
+    }
+}
