@@ -11,11 +11,33 @@ const basePath = 'app/assets/users/photos/';
 
 
 exports.retrieve = async (req, res) => {
+    console.log('--------GET user photo endpoint--------');
 
+    const path = `${basePath}${req.params.userId}`;
+
+    // Validation
+    if (!fs.existsSync(path)) {     // Covers userId not existing and user not having a photo
+        res.statusMessage = 'Not Found';
+        return res.status(404)
+            .send();
+    }
+
+    try {
+        const image = fs.readFileSync(path);
+        console.log('image', image);
+        res.statusMessage = 'OK';
+        res.status(200)
+            .send(image);
+    } catch (err) {
+        if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Internal Server Error';
+        return res.status(500)
+            .send();
+    }
 };
 
 exports.set = async (req, res) => {
-    console.log('--------Put user photo endpoint--------');
+    console.log('--------PUT user photo endpoint--------');
 
     const image = req.body;
     const userId = req.params.userId;
