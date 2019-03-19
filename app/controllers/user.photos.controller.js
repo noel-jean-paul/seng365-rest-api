@@ -90,6 +90,7 @@ exports.remove = async (req, res) => {
     console.log('--------PUT user photo endpoint--------');
 
     const userId = req.params.userId;
+    const path = `${basePath}${userId}`;
 
     // Validation
     if (!await User.checkUserExists(userId)) {
@@ -100,5 +101,22 @@ exports.remove = async (req, res) => {
         res.statusMessage = "Forbidden";
         return res.status(403)
             .send();
+    } else if (!fs.existsSync(path)) {     // user not having a photo case
+        res.statusMessage = 'Not Found';
+        return res.status(404)
+            .send();
     }
-}
+
+    // Delete photo
+    try {
+        fs.unlinkSync(path);
+        res.statusMessage = 'OK';
+        res.status(200)
+            .send();
+    } catch (err) {
+        if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Internal server error';
+        return res.status(500)
+            .send();
+    }
+};
