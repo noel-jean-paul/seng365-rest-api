@@ -2,7 +2,10 @@ const db = require('../../config/db');
 const fs = require('mz/fs');
 const userUtils = require('../utils/user');
 
-const photoDirectory = './storage/photos/';
+const basePhotoDirectory = 'app/assets/';
+const userPhotoDirectory = basePhotoDirectory + 'users/photos/';
+const venuePhotoDirectory = basePhotoDirectory + 'venues/photos/';
+
 
 exports.resetDB = async function () {
     let promises = [];
@@ -10,11 +13,14 @@ exports.resetDB = async function () {
     const sql = await fs.readFile('app/resources/create_database.sql', 'utf8');
     promises.push(db.getPool().query(sql));
 
-    if (await fs.exists(photoDirectory)) {
-        const files = await fs.readdir(photoDirectory);
-        for (const file of files) {
-            if (file !== 'default.png') {
-                promises.push(fs.unlink(photoDirectory + file));
+    const directories = [userPhotoDirectory, venuePhotoDirectory];
+    for (const photoDirectory of directories) {
+        if (await fs.exists(photoDirectory)) {
+            const files = await fs.readdir(photoDirectory);
+            for (const file of files) {
+                if (file !== 'default.png') {
+                    promises.push(fs.unlink(photoDirectory + file));
+                }
             }
         }
     }
