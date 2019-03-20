@@ -1,6 +1,7 @@
 const Backdoor = require('../models/backdoor.model');
 
 exports.resetDB = async function (req, res) {
+    console.log('--------Reset DB---------');
     try {
         await Backdoor.resetDB();
         res.statusMessage = 'OK';
@@ -15,6 +16,7 @@ exports.resetDB = async function (req, res) {
 };
 
 exports.resample = async function (req, res) {
+    console.log('--------Resample DB---------');
     try {
         await Backdoor.loadData();
         res.statusMessage = 'Created';
@@ -30,6 +32,9 @@ exports.resample = async function (req, res) {
 
 exports.executeSql = async function (req, res) {
     const sqlCommand = String(req.body);
+
+    console.log(`--------Execute SQL---------/nSQL=${sqlCommand}`);
+
     try {
         const results = await Backdoor.executeSql(sqlCommand);
         res.statusMessage = 'OK';

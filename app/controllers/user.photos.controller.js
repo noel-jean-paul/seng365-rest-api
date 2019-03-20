@@ -1,6 +1,5 @@
 'use strict';
 
-const UserPhotos = require('../models/user.photos.model');
 const User = require('../models/user.model');
 
 const auth = require('../utils/auth');
@@ -17,20 +16,15 @@ exports.retrieve = async (req, res) => {
     const path = `${basePath}${req.params.userId}`;
 
     // Validation
-    console.log(path);
-    console.log('Exists:', fs.existsSync(path));
     if (!fs.existsSync(path)) {     // Covers userId not existing and user not having a photo
-        console.log('in the 404 if');
         res.statusMessage = 'Not Found';
         return res.status(404)
             .send();
     }
 
     try {
-        console.log('reading');
         const buffer = fs.readFileSync(path);
         const type = fileType(buffer).mime;
-        console.log('buffer:', buffer, 'type', type);
         res.statusMessage = 'OK';
         res.contentType(type);
         res.status(200)
@@ -49,8 +43,6 @@ exports.set = async (req, res) => {
 
     const image = req.body;
     const userId = req.params.userId;
-
-    console.log('userId is', userId);
 
     // Validation
     if (! await User.checkUserExists(userId)) {
@@ -83,7 +75,6 @@ exports.set = async (req, res) => {
     try {
         fs.writeFileSync(path, image);
         // save the filepath in the database
-        console.log('saved image for userId ', userId, 'at path', path);
         res.send();
     } catch(err) {
         if (!err.hasBeenLogged) console.error(err);

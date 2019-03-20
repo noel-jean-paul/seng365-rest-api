@@ -30,14 +30,7 @@ module.exports = function () {
     }));
 
     // ROUTES
-    require('../app/routes/backdoor.routes')(app);
-    require('../app/routes/user.routes')(app);
-    require('../app/routes/user.photos.routes')(app);
-
-    // DEBUG (you can remove this)
-    app.get('/', function (req, res) {
-        res.send({ 'message': 'Hello nbi21!' })
-    });
+    require('../app/routes/router')(app);
 
     // Create assets folders if they do not exist
     if (!fs.existsSync('app/assets/users/photos')) {

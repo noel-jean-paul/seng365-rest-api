@@ -1,12 +1,15 @@
+const express = require('express');
+const router = express.Router();
+
 const backdoor = require('../controllers/backdoor.controller');
 
-module.exports = function (app) {
-    app.route(app.rootUrl + '/reset')
-        .post(backdoor.resetDB);
+router.route('/reset')
+    .post(backdoor.resetDB);
 
-    app.route(app.rootUrl + '/resample')
-        .post(backdoor.resample);
+router.route('/resample')
+    .post(backdoor.resample);
 
-    app.route(app.rootUrl + '/executeSql')
-        .post(backdoor.executeSql);
-};
+router.route('/executeSql')
+    .post(backdoor.executeSql);
+
+module.exports = router;
