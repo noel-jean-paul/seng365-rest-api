@@ -2,6 +2,8 @@
 
 const bcrypt = require('bcrypt');
 
+const utils = require('./utils');
+
 //
 // passwords
 //
@@ -32,40 +34,28 @@ exports.validateEmail = function (email) {
     return re.test(email.toLowerCase());
 };
 
-function validateGeneric(key, value, required) {
-    if (value !== undefined) {
-        if (typeof value !== 'string') {
-            return `'${key}' should be a string`;
-        } else if (value.length < 1) {
-            return `'${key}' should NOT be shorter than 1 characters`;
-        }
-    } else if (required) {
-        return `data should have required property '${key}'`
-    }
-    return null;
-}
+
 
 // Return null if all valid or error message otherwise
 // Can handle keys being passed that aren't in object
 // allRequired indicates that if a key in keysToValidate is missing from user then an error should
 // be returned
 exports.validateAttributes = (user, keysToValidate, allRequired=true) => {
-    // no attributes is a bad request
-    if (Object.entries(user).length === 0 && user.constructor === Object) {
-        return 'no fields supplied';
-    }
+    // revert to defaults if needed
+    keysToValidate = keysToValidate || ['username', 'email', 'password', 'givenName', 'familyName'];
 
-    const keys = ['username', 'email', 'password', 'givenName', 'familyName'];
-    keysToValidate = keysToValidate || keys;
+    const keys = [
+        utils.makeKeyObject('username'),
+        utils.makeKeyObject('email'),
+        utils.makeKeyObject('password'),
+        utils.makeKeyObject('givenName'),
+        utils.makeKeyObject('familyName')
+    ];
+    keysToValidate = utils.pickKeys(keysToValidate, keys);
 
-    let error = null;
-    for (const key of keys) {
-        if (keysToValidate.includes(key)) {
-            error = validateGeneric(key, user[key], allRequired);
-            if (error) {
-                break;
-            }
-        }
-    }
-    return error;
+    return utils.validateAttributes(user, keysToValidate, allRequired);
+
 };
+
+
+
