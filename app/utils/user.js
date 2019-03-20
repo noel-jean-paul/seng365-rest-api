@@ -41,9 +41,6 @@ exports.validateEmail = function (email) {
 // allRequired indicates that if a key in keysToValidate is missing from user then an error should
 // be returned
 exports.validateAttributes = (user, keysToValidate, allRequired=true) => {
-    // revert to defaults if needed
-    keysToValidate = keysToValidate || ['username', 'email', 'password', 'givenName', 'familyName'];
-
     const keys = [
         utils.makeKeyObject('username'),
         utils.makeKeyObject('email'),
@@ -51,10 +48,8 @@ exports.validateAttributes = (user, keysToValidate, allRequired=true) => {
         utils.makeKeyObject('givenName'),
         utils.makeKeyObject('familyName')
     ];
-    keysToValidate = utils.pickKeys(keysToValidate, keys);
 
-    return utils.validateAttributes(user, keysToValidate, allRequired);
-
+    return utils.validateAttributes(user, keys, keysToValidate, allRequired);
 };
 
 

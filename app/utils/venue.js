@@ -2,32 +2,18 @@
 
 const utils = require('./utils');
 
-exports.validateAttributes = (venue, keysToValidate, allRequired=true) => {
+exports.validateAttributes = (venue) => {
+    // Both post and put for venues change all attributes
     const keys = [
-        'venueName',
-        'categoryId',
-        'city',
-        'shortDescription',
-        'longDescription'
+        utils.makeKeyObject('venueName'),
+        utils.makeKeyObject('categoryId', Number.isInteger, false, 'int'),
+        utils.makeKeyObject('city'),
+        utils.makeKeyObject('shortDescription', 'string', false),
+        utils.makeKeyObject('longDescription', 'string', false),
+        utils.makeKeyObject('address'),
+        utils.makeKeyObject('latitude', 'number'),
+        utils.makeKeyObject('longitude', 'number')
     ];
 
-    keysToValidate = keysToValidate || keys;
-
-
-    let error = null;
-    for (const key of keys) {
-        if (keysToValidate.includes(key)) {
-            error = utils.validateGeneric(key, venue[key], allRequired);
-            if (error) {
-                break;
-            }
-        }
-    }
-
-    // no valid attributes is a bad request (only needed for patch)
-    if (!error && !utils.validFieldsProvided(user, keysToValidate)) {
-        error = 'no valid fields provided';
-    }
-
-    return error;
+    return utils.validateAttributes(venue, keys);
 };
