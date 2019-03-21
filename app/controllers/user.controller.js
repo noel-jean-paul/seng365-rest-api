@@ -103,19 +103,21 @@ exports.alter = async (req, res) => {
     console.log('-----Update user endpoint------');
 
     // validate data
-    const errorMsg = userUtils.validateAttributes(req.body,
-        ["givenName", "familyName", "password"], false);    // Do not require all of these attributes
-    if (errorMsg) {
-        res.statusMessage = "Bad Request: " + errorMsg;
-        return res.status(400)
-            .send();
-    } else if (! await User.checkUserExists(req.params.userId)) {
+    if (! await User.checkUserExists(req.params.userId)) {
         res.statusMessage = 'Not Found';
         return res.status(404)
             .send();
     } else if (req.params.userId !== auth.getAuthenticatedUserId()) {
         res.statusMessage = 'Forbidden';
         return res.status(403)
+            .send();
+    }
+
+    const errorMsg = userUtils.validateAttributes(req.body,
+        ["givenName", "familyName", "password"], false);    // Do not require all of these attributes
+    if (errorMsg) {
+        res.statusMessage = "Bad Request: " + errorMsg;
+        return res.status(400)
             .send();
     }
 
