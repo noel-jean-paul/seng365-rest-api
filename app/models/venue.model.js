@@ -5,7 +5,7 @@ const moment = require('moment');
 const db = require('../../config/db');
 
 //
-// Internal helper functions
+// External helper functions
 //
 exports.getAllCategoryIds = async () => {
     const sql = 'SELECT category_id FROM VenueCategory';
@@ -16,6 +16,22 @@ exports.getAllCategoryIds = async () => {
     } catch (err) {
         throw err;
     }
+};
+
+exports.venueExists = async (venueId) => {
+    const sql = 'SELECT venue_id FROM Venue WHERE venue_id = (?)';
+    const values = [venueId];
+
+    const rows = await db.getPool().query(sql, values);
+    return rows.length === 1;
+};
+
+exports.getAdminId = async (venueId) => {
+    const sql = 'SELECT admin_id FROM Venue WHERE venue_id = (?)';
+    const values = [venueId];
+
+    const rows = await db.getPool().query(sql, values);
+    return rows[0].admin_id;
 };
 
 

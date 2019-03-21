@@ -2,7 +2,7 @@
 
 const utils = require('./utils');
 
-exports.validateAttributes = (venue) => {
+exports.validateAttributes = (venue, allRequired) => {
     // Both post and put for venues change all attributes
     const keys = [
         utils.makeKeyObject('venueName'),
@@ -15,7 +15,7 @@ exports.validateAttributes = (venue) => {
         utils.makeKeyObject('longitude', 'number')
     ];
 
-    return utils.validateAttributes(venue, keys);
+    return utils.validateAttributes(venue, keys, null, allRequired);
 };
 
 exports.validateLatAndLong = (latitude, longitude) => {

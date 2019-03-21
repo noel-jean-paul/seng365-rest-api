@@ -5,21 +5,53 @@ const venueUtils = require('../utils/venue');
 
 const auth = require('../utils/auth');
 
-exports.create = async (req, res) => {
-    console.log('-----Create venue endpoint------');
+// Internal helper funcs
 
-    // Validate incoming data
-    const errorMsg = venueUtils.validateAttributes(req.body) ||
-        venueUtils.validateLatAndLong(req.body.latitude, req.body.longitude);
+async function verifyBodyInternal(body, allRequired) {
+    const errorMsg = venueUtils.validateAttributes(body, allRequired) ||
+        venueUtils.validateLatAndLong(body.latitude, body.longitude);
+    if (errorMsg) {
+        return errorMsg;
+    } else if (body.categoryId && ! (await Venue.getAllCategoryIds()).includes(body.categoryId)) {
+        return 'categoryId does not match any existing category';
+    }
+}
+
+
+// External helper funcs
+exports.verifyVenueExists = async (req, res, next) => {
+    if (! await Venue.venueExists(req.params.venueId)) {
+        res.statusMessage = 'Not Found';
+        return res.status(404)
+            .send();
+    }
+    next();
+};
+
+exports.verifyAllowed = async (req, res, next) => {
+    if ((await Venue.getAdminId(req.params.venueId)).toString() !== auth.getAuthenticatedUserId()) {
+        res.statusMessage = 'Forbidden';
+        return res.status(403)
+            .send();
+    }
+    next();
+};
+
+exports.verifyBody= async (req, res, next, allRequired=true) => {
+    const errorMsg = await verifyBodyInternal(req.body, allRequired);
     if (errorMsg) {
         res.statusMessage = "Bad Request: " + errorMsg;
         return res.status(400)
             .send();
-    } else if (! (await Venue.getAllCategoryIds()).includes(req.body.categoryId)) {
-        res.statusMessage = 'Bad Request: categoryId does not match any existing category';
-        return res.status(400)
-            .send();
     }
+    next();
+};
+
+
+// Main funcs
+
+exports.create = async (req, res) => {
+    console.log('-----Create venue endpoint------');
 
     const userId = auth.getAuthenticatedUserId();
     try {
@@ -27,6 +59,25 @@ exports.create = async (req, res) => {
         res.statusMessage = 'Created';
         return res.status(201)
             .json({"venueId": venueId});
+    } catch (err) {
+        if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Internal server error';
+        return res.status(500)
+            .send();
+    }
+};
+
+exports.alter = async (req, res) => {
+    console.log('-----Create venue endpoint------');
+
+    const venueId = req.params.venueId;
+    const userId = auth.getAuthenticatedUserId();
+
+    try {
+        await Venue.update(venueId, userId, req.body);
+        res.statusMessage = 'OK';
+        return res.status(200)
+            .send();
     } catch (err) {
         if (!err.hasBeenLogged) console.error(err);
         res.statusMessage = 'Internal server error';
