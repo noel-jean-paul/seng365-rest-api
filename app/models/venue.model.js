@@ -27,8 +27,7 @@ exports.insert = async (userId, data) => {
     const sql = "INSERT INTO Venue (admin_id, category_id, venue_name, city, short_description," +
         "long_description, date_added, address, latitude, longitude) VALUES (?)";
 
-    let dateAdded = moment.utc().format('YYYY-MM-DDT00:00:00.000') + 'Z';
-    console.log(dateAdded);
+    let dateAdded = moment.utc().format('YYYY-MM-DD');
 
     const values = [
         [userId, data.categoryId, data.venueName, data.city, data.shortDescription, data.longDescription,
