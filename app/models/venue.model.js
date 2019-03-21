@@ -115,3 +115,110 @@ exports.update = async (venueId, userId, data) => {
         throw err;
     }
 };
+
+
+exports.getOne = async (venueId) => {
+    const sql = 'SELECT * ' +
+        'FROM Venue v ' +
+        'natural join VenueCategory ' +
+        'join User u on v.admin_id = u.user_id ' +
+        'WHERE venue_id = (?)';
+    const values = [venueId];
+
+    const rows = await db.getPool().query(sql, values);
+
+    if (rows.length === 0) {
+        return null;     // bad id
+    }
+
+    const data = rows[0];
+    // transform from db names to normal names
+    const venueData = {
+            venueName: data.venue_name,
+            admin: {
+                userId: data.admin_id,
+                username: data.username
+            },
+            category: {
+                categoryId: data.category_id,
+                categoryName: data.category_name,
+                categoryDescription: data.category_description
+            },
+            city: data.city,
+            shortDescription: data.short_description,
+            longDescription: data.long_description,
+            dateAdded: data.date_added,
+            address: data.address,
+            latitude: data.latitude,
+            longitude: data.longitude,
+            photos: []
+    };
+
+    venueData.photos = await addPhotos(venueId);
+
+    return venueData;
+};
+
+// Modify venueData by adding photos
+async function addPhotos(venueId) {
+    const sql = 'SELECT photo_filename, photo_description, is_primary ' +
+        'FROM Venue ' +
+        'natural join VenuePhoto ' +
+        'WHERE venue_id = (?)';
+
+    const values = [venueId];
+    const rows = await db.getPool().query(sql, values);
+
+    let photo;
+    let photos = [];
+    for (const row of rows) {
+        photo = {
+            photoFileName: row.photo_filename,
+            photoDescription: row.photo_description,
+            isPrimary: row.is_primary === 1
+        };
+        photos.push(photo);
+    }
+
+    return photos;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

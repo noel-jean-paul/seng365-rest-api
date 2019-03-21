@@ -68,7 +68,7 @@ exports.create = async (req, res) => {
 };
 
 exports.alter = async (req, res) => {
-    console.log('-----Create venue endpoint------');
+    console.log('-----Update venue endpoint------');
 
     const venueId = req.params.venueId;
     const userId = auth.getAuthenticatedUserId();
@@ -85,3 +85,51 @@ exports.alter = async (req, res) => {
             .send();
     }
 };
+
+exports.retrieve = async (req, res) => {
+    console.log('-----Get Single Venue endpoint------');
+
+    try {
+        const venue = await Venue.getOne(req.params.venueId);
+        if (venue) {
+            res.statusMessage = 'OK';
+            return res.status(200)
+                .json(venue);
+        } else {
+            res.statusMessage = 'Not Found';
+            return res.status(404)
+                .send();
+        }
+    } catch(err) {
+        if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Internal server error';
+        return res.status(500)
+            .send();
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

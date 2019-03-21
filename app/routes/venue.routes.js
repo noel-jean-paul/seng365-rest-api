@@ -12,6 +12,11 @@ router.route('/')
     );
 
 router.route('/:venueId')
+    .get(
+        venues.verifyVenueExists,
+        venues.retrieve
+    )
+
     .patch(
         auth.checkToken,
         venues.verifyVenueExists,
