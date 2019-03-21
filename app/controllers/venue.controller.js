@@ -9,7 +9,8 @@ exports.create = async (req, res) => {
     console.log('-----Create venue endpoint------');
 
     // Validate incoming data
-    const errorMsg = venueUtils.validateAttributes(req.body);
+    const errorMsg = venueUtils.validateAttributes(req.body) ||
+        venueUtils.validateLatAndLong(req.body.latitude, req.body.longitude);
     if (errorMsg) {
         res.statusMessage = "Bad Request: " + errorMsg;
         return res.status(400)
