@@ -57,3 +57,61 @@ exports.insert = async (userId, data) => {
         throw err;
     }
 };
+
+exports.update = async (venueId, userId, data) => {
+    const keyMap = [
+        {
+            key: "venueName",
+            sqlKey: "venue_name"
+        },
+        {
+            key: "categoryId",
+            sqlKey: "category_id"
+        },
+        {
+            key: "city",
+        },
+        {
+            key: "shortDescription",
+            sqlKey: "short_description"
+        },
+        {
+            key: "shortDescription",
+            sqlKey: "short_description"
+        },
+        {
+            key: "longDescription",
+            sqlKey: "long_description"
+        },
+        {
+            key: "address",
+        },
+        {
+            key: "latitude",
+        },
+        {
+            key: "longitude",
+        }
+    ];
+
+    let updates = '';
+    let values = [];
+
+    for (let keyObj of keyMap) {
+        if (Object.keys(data).includes(keyObj.key)) {
+            updates += (keyObj.sqlKey || keyObj.key) + ' = (?), ';
+            values.push(data[keyObj.key]);
+        }
+    }
+    updates = updates.slice(0, -2); // cut off trailing comma and space
+
+    const sql = 'UPDATE Venue SET ' + updates + ' WHERE venue_id = (?)';
+    values.push(venueId);
+
+
+    try {
+        await db.getPool().query(sql, values);
+    } catch(err) {
+        throw err;
+    }
+};
