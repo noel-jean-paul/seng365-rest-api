@@ -4,14 +4,21 @@ function isFunction(functionToCheck) {
     return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 }
 
-exports.validateGeneric = function(key, value, type, required, lengthChecked=true, backupType) {
+exports.validateGeneric = function(key, value, type, required, lengthChecked=true,
+                                   backupType, validate) {
     if (value !== undefined) {
         if (isFunction(type) && !type(value)) { // may get passed a func for type checking
-            return `'${key}' should be a ${backupType}`;
-        } else if (!isFunction(type) && typeof value !== type) {
-            return `'${key}' should be a ${type}`;
+            return `'${key}' should be ${backupType}`;
+        } else if (!isFunction(type) &&
+            (typeof value !== type || (typeof value === 'number' && isNaN(value)))) {
+            return `'${key}' should be ${type}`;
         } else if (lengthChecked && value.length < 1) {
             return `'${key}' should NOT be shorter than 1 characters`;
+        } else if (validate) {
+            const message = validate(value);
+            if (message) {
+                return `'${key}' should be ${message}`;
+            }
         }
     } else if (required) {
         return `data should have required property '${key}'`
@@ -44,17 +51,22 @@ exports.validateAttributes = (obj, keys, keysToValidate, allRequired=true) => {
 // allRequired indicates that if a key in keysToValidate is missing from user then an error should
 // be returned
 // keys = objects
-function validateAttributesInternal(obj, keys, allRequired=true) {
+function validateAttributesInternal(obj, keys, allRequired=true, canBeEmpty=false) {
     let error;
     for (const key of keys) {
-        error = exports.validateGeneric(key.name, obj[key.name], key.type, allRequired, key.lengthChecked);
+        let value = obj[key.name];
+        if (value !== undefined) {
+            value = key.preProcess ? key.preProcess(value) : value;
+        }
+        error = exports.validateGeneric(key.name, value, key.type, allRequired,
+            key.lengthChecked, key.backupType, key.validate);
         if (error) {
             break;
         }
     }
 
     // no valid attributes is a bad request (only needed for patch)
-    if (!error && !exports.validFieldsProvided(obj, keys.map((key) => key.name))) {
+    if (!error && !canBeEmpty && !exports.validFieldsProvided(obj, keys.map((key) => key.name))) {
         error = 'no valid fields provided';
     }
 
@@ -65,11 +77,22 @@ function pickKeys(keys, reference) {
     return reference.filter((obj) => {return keys.includes(obj.name)});
 }
 
-exports.makeKeyObject = (name, type='string', lengthChecked=true, backupType) => {
+exports.makeKeyObject = (name, type='string', lengthChecked=true, backupType, validate, preProcess) => {
     return {
         name: name,
         type:type,
         lengthChecked: lengthChecked,
-        backupType: backupType
+        backupType: backupType,
+        validate: validate,
+        preProcess: preProcess
     };
+};
+
+exports.makeQueryKeyObject = (name, validate=exports.checkGreaterThanZero, type=Number.isInteger,
+                              backupType='integer', preProcess=parseInt) => {
+    return exports.makeKeyObject(name, type, true, backupType, validate, preProcess);
+};
+
+exports.checkGreaterThanZero = (value) => {
+    return value >= 0 ? null : '>= 0'
 };

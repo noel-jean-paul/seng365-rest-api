@@ -5,6 +5,11 @@ const venues = require('../controllers/venue.controller');
 const auth = require('../utils/auth');
 
 router.route('/')
+    .get(
+        venues.verifyQueryParams,
+        venues.setQueryDefaults,
+        venues.retrieveAll
+    )
     .post(
         auth.checkToken,
         venues.verifyBody,

@@ -124,6 +124,39 @@ exports.retrieveCategories = async (req, res) => {
     }
 };
 
+// Get /venues
+exports.verifyQueryParams = (req, res, next) => {
+    const params = req.query;
+
+    const errorMessage = venueUtils.validateQueryParams(params);
+    if (errorMessage) {
+        res.statusMessage = `Bad Request: ${errorMessage}`;
+        res.status(400)
+            .send();
+    }
+
+    next();
+};
+
+exports.setQueryDefaults = (req, res, next) => {
+    const params = req.query;
+    if (params.startIndex === undefined) {
+        params.startIndex = '0';
+    } else if (params.sortBy === undefined) {
+        params.soryBy = 'STAR_RATING';
+    } else if (params.reverseSort === undefined) {
+        params.reverseSort = 'false';
+    }
+    next();
+};
+
+exports.retrieveAll = async (req, res) => {
+
+    res.statusMessage = 'OK';
+    res.status(200)
+        .send();
+};
+
 
 
 

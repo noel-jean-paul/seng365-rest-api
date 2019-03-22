@@ -6,7 +6,7 @@ exports.validateAttributes = (venue, allRequired) => {
     // Both post and put for venues change all attributes
     const keys = [
         utils.makeKeyObject('venueName'),
-        utils.makeKeyObject('categoryId', Number.isInteger, false, 'int'),
+        utils.makeKeyObject('categoryId', Number.isInteger, false, 'integer'),
         utils.makeKeyObject('city'),
         utils.makeKeyObject('shortDescription', 'string', false),
         utils.makeKeyObject('longDescription', 'string', false),
@@ -41,3 +41,101 @@ function verifyLongitude(longitude) {
         return null;
     }
 }
+
+// Validation for get /venues
+
+exports.validateQueryParams = (params) => {
+    const keys = [
+        utils.makeQueryKeyObject('count'),
+        utils.makeQueryKeyObject('startIndex'),
+        utils.makeQueryKeyObject('categoryId'),
+        utils.makeQueryKeyObject('maxCostRating', validateCostRating),
+        utils.makeQueryKeyObject('adminId'),
+        utils.makeQueryKeyObject('q', validateQ, 'string',
+            null, null),
+        utils.makeQueryKeyObject('minStarRating', (value) => {
+            return checkRange(value, 1, 5)
+        }),
+        utils.makeQueryKeyObject('sortBy', (value) =>
+            { return validateSortBy(value, params.myLatitude, params.myLongitude) },
+                'string', null, null),
+        utils.makeQueryKeyObject('reverseSort', null, checkReverseSortType,
+        'boolean', null),
+        utils.makeQueryKeyObject('myLatitude', verifyLatitude, 'number'),
+        utils.makeQueryKeyObject('myLongitude', verifyLongitude, 'number')
+    ];
+
+    return utils.validateAttributes(params, keys, null, false);
+};
+
+
+function validateCostRating(value) {
+    return checkRange(value, 0, 4);
+}
+
+function validateQ(q) {
+    if (parseInt(q)) {
+        return 'string';    // should be string, not parsable to int
+    }
+}
+
+function validateSortBy(sortBy, myLat, myLong) {
+    const validValues = ['DISTANCE', 'COST_RATING', 'STAR_RATING'];
+    if (!validValues.includes(sortBy)) {
+        return 'should be equal to one of the allowed values';
+    } else if (sortBy === 'DISTANCE' && (myLat === undefined || myLong === undefined)) {
+        return 'myLatitude and myLongitude must be provided when sorting by distance';
+    }
+}
+
+function checkReverseSortType(value) {
+    value = value.toLowerCase();
+    return value === 'true' || value === 'false';
+}
+
+// Helper funcs
+function checkRange(value, lower, upper) {
+    return checkGreaterThan(value, lower) || checkLessThan(value, upper);
+}
+
+function checkGreaterThan(value, bound) {
+    return checkValue(value, bound, true);
+}
+
+function checkLessThan(value, bound) {
+    return checkValue(value, bound, false);
+}
+
+function checkValue(value, bound, greaterThan) {
+    if (greaterThan) {
+        return value >= bound ? null : `>= ${bound}`;
+    } else {
+        return value <= bound ? null : `<= ${bound}`;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
