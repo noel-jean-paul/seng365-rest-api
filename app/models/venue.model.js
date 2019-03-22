@@ -201,49 +201,24 @@ exports.getCategories = async () => {
 
 // Get /venues
 
-// exports.getMultiple = async (venueId) => {
-//     const sql = 'SELECT * ' +
-//         'FROM Venue v ' +
-//         'natural join VenueCategory ' +
-//         'join User u on v.admin_id = u.user_id ' +
-//         'WHERE venue_id = (?)';
-//     const values = [venueId];
-//
-//     const rows = await db.getPool().query(sql, values);
-//
-//     if (rows.length === 0) {
-//         return null;     // bad id
-//     }
-//
-//     const data = rows[0];
-//     // transform from db names to normal names
-//     const venueData = {
-//         venueName: data.venue_name,
-//         admin: {
-//             userId: data.admin_id,
-//             username: data.username
-//         },
-//         category: {
-//             categoryId: data.category_id,
-//             categoryName: data.category_name,
-//             categoryDescription: data.category_description
-//         },
-//         city: data.city,
-//         shortDescription: data.short_description,
-//         longDescription: data.long_description,
-//         dateAdded: data.date_added,
-//         address: data.address,
-//         latitude: data.latitude,
-//         longitude: data.longitude,
-//         photos: []
-//     };
-//
-//     venueData.photos = await addPhotos(venueId);
-//
-//     return venueData;
-// };
+exports.getAll = async (params) => {
+    const sqlData = buildQuery(params);
+    const sql = sqlData.sql;
+    const values = sqlData.values;
 
+    const rows = await db.getPool().query(sql, values);
+    console.log(rows);
 
+    // Process data
+};
+
+function buildQuery() {
+
+}
+
+function buildWhereStatement(statements) {
+
+}
 
 
 

@@ -142,19 +142,29 @@ exports.setQueryDefaults = (req, res, next) => {
     const params = req.query;
     if (params.startIndex === undefined) {
         params.startIndex = '0';
-    } else if (params.sortBy === undefined) {
-        params.soryBy = 'STAR_RATING';
-    } else if (params.reverseSort === undefined) {
+    }
+    if (params.sortBy === undefined) {
+        params.sortBy = 'STAR_RATING';
+    }
+    if (params.reverseSort === undefined) {
         params.reverseSort = 'false';
     }
     next();
 };
 
 exports.retrieveAll = async (req, res) => {
-
-    res.statusMessage = 'OK';
-    res.status(200)
-        .send();
+    console.log(req.query);
+    try {
+        const result = await Venue.getAll(req.query);
+        // Take startIndex/count rows
+        return res.status(200)
+            .json(result);
+    } catch (err) {
+        if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Internal server error';
+        return res.status(500)
+            .send();
+    }
 };
 
 
