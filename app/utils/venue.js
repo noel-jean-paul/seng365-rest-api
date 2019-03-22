@@ -51,7 +51,9 @@ exports.validateQueryParams = (params) => {
         utils.makeQueryKeyObject('categoryId'),
         utils.makeQueryKeyObject('maxCostRating', validateCostRating),
         utils.makeQueryKeyObject('adminId'),
-        utils.makeQueryKeyObject('q', validateQ, 'string',
+        utils.makeQueryKeyObject('city', validateString, 'string',
+            null, null),
+        utils.makeQueryKeyObject('q', validateString, 'string',
             null, null),
         utils.makeQueryKeyObject('minStarRating', (value) => {
             return checkRange(value, 1, 5)
@@ -73,8 +75,8 @@ function validateCostRating(value) {
     return checkRange(value, 0, 4);
 }
 
-function validateQ(q) {
-    if (parseInt(q)) {
+function validateString(string) {
+    if (parseInt(string)) {
         return 'string';    // should be string, not parsable to int
     }
 }
