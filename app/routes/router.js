@@ -1,3 +1,5 @@
+const venues = require('../controllers/venue.controller');
+
 module.exports = (app) => {
     // DEBUG
     app.get(app.rootUrl + '/', function (req, res) {
@@ -8,6 +10,8 @@ module.exports = (app) => {
     app.use(app.rootUrl + '/users', require('./user.routes'));
     app.use(app.rootUrl + '/venues', require('./venue.routes'));
 
+    app.route(app.rootUrl + '/categories')
+        .get(venues.retrieveCategories);
 
     // Catch all
     app.use('*', function (req, res){

@@ -108,6 +108,22 @@ exports.retrieve = async (req, res) => {
     }
 };
 
+exports.retrieveCategories = async (req, res) => {
+    console.log('--------Get categories endpoint--------');
+
+    try {
+        const categories = await Venue.getCategories();
+        res.statusMessage = 'OK';
+        return res.status(200)
+            .json(categories);
+    } catch (err) {
+        if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Internal server error';
+        return res.status(500)
+            .send();
+    }
+};
+
 
 
 

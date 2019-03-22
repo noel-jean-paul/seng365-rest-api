@@ -183,6 +183,22 @@ async function addPhotos(venueId) {
     return photos;
 }
 
+exports.getCategories = async () => {
+    const sql = 'SELECT * FROM VenueCategory';
+    const rows = await db.getPool().query(sql);
+
+    let categories = [];
+    for (const row of rows) {
+        categories.push({
+           categoryId: row.category_id,
+           categoryName: row.category_name,
+           categoryDescription: row.category_description
+        });
+    }
+
+    return categories;
+};
+
 
 
 
