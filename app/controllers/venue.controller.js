@@ -37,7 +37,7 @@ exports.verifyAllowed = async (req, res, next) => {
     next();
 };
 
-exports.verifyBody= async (req, res, next, allRequired=true) => {
+exports.verifyBody = async (req, res, next, allRequired=true) => {
     const errorMsg = await verifyBodyInternal(req.body, allRequired);
     if (errorMsg) {
         res.statusMessage = "Bad Request: " + errorMsg;

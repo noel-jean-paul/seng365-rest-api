@@ -61,7 +61,7 @@ exports.validateQueryParams = (params) => {
         utils.makeQueryKeyObject('sortBy', (value) =>
             { return validateSortBy(value, params.myLatitude, params.myLongitude) },
                 'string', null, null),
-        utils.makeQueryKeyObject('reverseSort', null, checkReverseSortType,
+        utils.makeQueryKeyObject('reverseSort', null, checkBoolean,
         'boolean', null),
         utils.makeQueryKeyObject('myLatitude', verifyLatitude, 'number'),
         utils.makeQueryKeyObject('myLongitude', verifyLongitude, 'number')
@@ -76,7 +76,8 @@ function validateCostRating(value) {
 }
 
 function validateString(string) {
-    if (parseInt(string)) {
+    const parsed = parseInt(string);
+    if (parsed || parsed === 0) { // 0 would be construed as false, could also chec for NaN
         return 'string';    // should be string, not parsable to int
     }
 }
@@ -90,7 +91,7 @@ function validateSortBy(sortBy, myLat, myLong) {
     }
 }
 
-function checkReverseSortType(value) {
+function checkBoolean(value) {
     value = value.toLowerCase();
     return value === 'true' || value === 'false';
 }
@@ -115,6 +116,23 @@ function checkValue(value, bound, greaterThan) {
         return value <= bound ? null : `<= ${bound}`;
     }
 }
+
+
+exports.validatePostPhotoAttributes = (body) => {
+    // easy to use query obj builder
+    const keys = [
+        utils.makeKeyObject('description', 'string', false, null,
+            validateString),
+        utils.makeKeyObject('makePrimary', checkBoolean, false, 'boolean'),
+    ];
+
+    console.log('keys', keys);
+    console.log('body', body);
+
+    return utils.validateAttributes(body, keys, ['description', 'makePrimary']);
+};
+
+
 
 // Distance calculation
 exports.distance = (lat1, lon1, lat2, lon2) => {

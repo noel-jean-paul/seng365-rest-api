@@ -2,7 +2,10 @@ const express = require('express');
 const router = express.Router();
 
 const venues = require('../controllers/venue.controller');
+const venuePhotos = require('../controllers/venue.photos.controller');
 const auth = require('../utils/auth');
+
+const formidable = require('express-formidable');
 
 router.route('/')
     .get(
@@ -28,6 +31,16 @@ router.route('/:venueId')
         venues.verifyAllowed,
         (req, res, next) => { venues.verifyBody(req, res, next,false) },
         venues.alter
+    );
+
+router.route('/:venueId/photos')
+    .post(
+        auth.checkToken,
+        venues.verifyVenueExists,
+        venues.verifyAllowed,
+        formidable(),
+        venuePhotos.verifyPostBody,
+        venuePhotos.addPhoto
     );
 
 module.exports = router;
