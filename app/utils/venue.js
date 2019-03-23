@@ -126,9 +126,6 @@ exports.validatePostPhotoAttributes = (body) => {
         utils.makeKeyObject('makePrimary', checkBoolean, false, 'boolean'),
     ];
 
-    console.log('keys', keys);
-    console.log('body', body);
-
     return utils.validateAttributes(body, keys, ['description', 'makePrimary']);
 };
 

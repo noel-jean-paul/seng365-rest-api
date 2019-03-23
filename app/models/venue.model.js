@@ -271,8 +271,6 @@ function buildQuery(params) {
     if (params.sortBy !== 'DISTANCE') { // Distance sorting handled by js later
         sql = addOrderByStatement(params, sql, values);
     }
-    console.log('sql is', sql);
-    console.log('values are', values);
 
     return {
         sql: sql,
@@ -282,7 +280,6 @@ function buildQuery(params) {
 
 function addWhereStatement(params, sql, values) {
     const whereStatements = parseWhereParams(params, values);
-    console.log(whereStatements, values);
 
     let whereStatement = '';
 
@@ -293,7 +290,6 @@ function addWhereStatement(params, sql, values) {
         }
     }
 
-    console.log('where statement is', whereStatement);
     sql += whereStatement;
 
     return sql;
@@ -372,7 +368,6 @@ function addOrderByStatement(params, sql) {
         let orderDirection = directions[sortBy].order;
 
         if (params.reverseSort === 'true') {   // Flip ordering if reverse sorting
-            console.log('in the if');
             if (orderDirection === 'DESC') {
                 orderDirection = 'ASC';
             } else {
