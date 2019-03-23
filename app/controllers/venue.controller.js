@@ -131,7 +131,7 @@ exports.verifyQueryParams = (req, res, next) => {
     const errorMessage = venueUtils.validateQueryParams(params);
     if (errorMessage) {
         res.statusMessage = `Bad Request: ${errorMessage}`;
-        res.status(400)
+        return res.status(400)
             .send();
     }
 
@@ -153,7 +153,6 @@ exports.setQueryDefaults = (req, res, next) => {
 };
 
 exports.retrieveAll = async (req, res) => {
-    console.log(req.query);
     try {
         const result = await Venue.getAll(req.query);
         // Take startIndex/count rows
