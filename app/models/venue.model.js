@@ -3,6 +3,7 @@
 const moment = require('moment');
 
 const db = require('../../config/db');
+const venueUtils = require('../utils/venue');
 
 //
 // External helper functions
@@ -206,36 +207,169 @@ exports.getAll = async (params) => {
     const sql = sqlData.sql;
     const values = sqlData.values;
 
-    const rows = await db.getPool().query(sql, values);
-    console.log(rows);
+    let rows = await db.getPool().query(sql, values)
 
-    // Process data
+    // apply startIndex / count
+    console.log('count is', params.count);
+
+    const startIndex = params.startIndex;
+    if (!params.hasOwnProperty('count')) {
+        rows = rows.slice(startIndex);
+    } else {
+        rows = rows.slice(startIndex, startIndex + params.count);  // slice does not include last index
+    }
+
+    // Calculate distance and sort by distance
+    if (params.hasOwnProperty('myLatitude') && params.hasOwnProperty('myLongitude')) {
+        for (let row of rows) {
+            row.distance = venueUtils.distance(params.myLatitude, params.myLongitude,
+                row.latitude, row.longitude);
+        }
+
+        rows.sort((a,b) => (a.distance > b.distance) ? 1 : ((b.distance > a.distance) ? -1 : 0));
+    }
+
+    return rows;
 };
 
-function buildQuery() {
+function buildQuery(params) {
+    let values = [];
+    let sql = 'SELECT *, ' +
+        '(SELECT mode_cost_rating FROM ModeCostRating WHERE venue_id = v1.venue_id LIMIT 1) ' +
+        'as mode_cost_rating, ' +
+        '(SELECT AVG(star_rating) FROM Venue v2 join Review r on v2.venue_id = r.reviewed_venue_id ' +
+        'WHERE v1.venue_id = v2.venue_id) as mean_star_rating ' +
+        'FROM Venue v1 ';
 
+    sql = addWhereStatement(params, sql, values);
+    sql = addOrderByStatement(params, sql, values);
+    console.log('sql is', sql);
+    console.log('values are', values);
+
+    return {
+        sql: sql,
+        values: values
+    }
 }
 
-function buildWhereStatement(statements) {
-
+function getDistanceColumnSql(params, values) {
+    let distance = venueUtils.distance(params.myLatitude, params.myLongitude);
+    let sql = `(?) as distance`;
+    values.push(distance);
+    return sql;
 }
 
+function addWhereStatement(params, sql, values) {
+    const whereStatements = parseWhereParams(params, values);
+    console.log(whereStatements, values);
 
+    let whereStatement = '';
 
+    if (whereStatements.length > 0) {
+        whereStatement += 'WHERE ' + whereStatements[0] + ' ';
+        for (let i = 1; i < whereStatements.length; i++) {
+            whereStatement += 'AND ' + whereStatements[i] + ' ';
+        }
+    }
 
+    console.log('where statement is', whereStatement);
+    sql += whereStatement;
 
+    return sql;
+}
 
+function parseWhereParams(params, values) {
+    let statements = [];
+    let statement;
 
+    if (params.hasOwnProperty('categoryId')) {
+        statement = 'category_id = (?)';
+        statements.push(statement);
+        values.push(params.categoryId);
+    }
 
+    if (params.hasOwnProperty('adminId')) {
+        statement = 'admin_id = (?)';
+        statements.push(statement);
+        values.push(params.adminId);
+    }
 
+    if (params.hasOwnProperty('city')) {
+        statement = 'city = (?)';
+        statements.push(statement);
+        values.push(params.city);
+    }
 
+    if (params.hasOwnProperty('q')) {
+        statement = 'venue_name LIKE (?)';
+        statements.push(statement);
+        values.push('%' + params.q + '%');
+    }
 
+    if (params.hasOwnProperty('minStarRating')) {
+        statement = '(?) <= (' +
+            'SELECT AVG(star_rating) ' +
+            'FROM Venue v2 ' +
+            'join Review r on v2.venue_id = r.reviewed_venue_id ' +
+            'WHERE v1.venue_id = v2.venue_id' +
+            ')';
+        statements.push(statement);
+        values.push(params.minStarRating);
+    }
 
+    if (params.hasOwnProperty('maxCostRating')) {
+        statement = '(?) >= (' +
+            'SELECT mode_cost_rating ' +
+            'FROM ModeCostRating mc ' +
+            'WHERE v1.venue_id = mc.venue_id ' +
+            'LIMIT 1' +
+            ')';
+        statements.push(statement);
+        values.push(params.maxCostRating);
+    }
 
+    return statements;
+}
 
+function addOrderByStatement(params, sql, values) {
+    if (params.hasOwnProperty('sortBy')) {
+        const sortBy = params.sortBy;
 
+        let orderByStatement = 'ORDER BY ';
+        const directions = {
+            STAR_RATING: {
+                attribute: 'mean_star_rating',
+                order: 'DESC'
+            },
+            COST_RATING: {
+                attribute: 'mode_cost_rating',
+                order: 'ASC'
+            },
+            DISTANCE: {
+                attribute: 'destination',
+                order: 'ASC'
+            }
+        };
 
+        let orderBy = directions[sortBy].attribute;
+        let orderDirection = directions[sortBy].order;
 
+        if (params.reverseSort === 'true') {   // Flip ordering if reverse sorting
+            console.log('in the if');
+            if (orderDirection === 'DESC') {
+                orderDirection = 'ASC';
+            } else {
+                orderDirection = 'DESC';
+            }
+        }
+
+        orderByStatement += `${orderBy} ${orderDirection}`;
+
+        sql += orderByStatement;
+    }
+
+    return sql;
+}
 
 
 

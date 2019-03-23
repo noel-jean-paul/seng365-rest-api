@@ -156,6 +156,7 @@ exports.retrieveAll = async (req, res) => {
     try {
         const result = await Venue.getAll(req.query);
         // Take startIndex/count rows
+
         return res.status(200)
             .json(result);
     } catch (err) {
