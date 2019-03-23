@@ -207,7 +207,7 @@ exports.getAll = async (params) => {
     const sql = sqlData.sql;
     const values = sqlData.values;
 
-    let rows = await db.getPool().query(sql, values)
+    let rows = await db.getPool().query(sql, values);
 
     // Calculate distance and sort by distance
     if (params.hasOwnProperty('myLatitude') && params.hasOwnProperty('myLongitude')) {
@@ -262,7 +262,9 @@ function buildQuery(params) {
         '(SELECT mode_cost_rating FROM ModeCostRating WHERE venue_id = v1.venue_id LIMIT 1) ' +
         'as mode_cost_rating, ' +
         '(SELECT AVG(star_rating) FROM Venue v2 join Review r on v2.venue_id = r.reviewed_venue_id ' +
-        'WHERE v1.venue_id = v2.venue_id) as mean_star_rating ' +
+        'WHERE v1.venue_id = v2.venue_id) as mean_star_rating, ' +
+        '(SELECT photo_filename FROM VenuePhoto vp WHERE vp.venue_id = v1.venue_id ' +
+        'AND is_primary = true) as primary_photo ' +
         'FROM Venue v1 ';
 
     sql = addWhereStatement(params, sql, values);
@@ -350,7 +352,7 @@ function parseWhereParams(params, values) {
     return statements;
 }
 
-function addOrderByStatement(params, sql, values) {
+function addOrderByStatement(params, sql) {
     if (params.hasOwnProperty('sortBy')) {
         const sortBy = params.sortBy;
 
