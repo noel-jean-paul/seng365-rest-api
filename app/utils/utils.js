@@ -37,13 +37,13 @@ exports.validFieldsProvided = (obj, validKeys) => {
 };
 
 
-exports.validateAttributes = (obj, keys, keysToValidate, allRequired=true) => {
+exports.validateAttributes = (obj, keys, keysToValidate, allRequired=true, canBeEmpty=false) => {
     // revert to defaults if needed
     keysToValidate = keysToValidate || keys.map((key) => key.name);
 
     keysToValidate = pickKeys(keysToValidate, keys);
 
-    return validateAttributesInternal(obj, keysToValidate, allRequired);
+    return validateAttributesInternal(obj, keysToValidate, allRequired, canBeEmpty);
 };
 
 // Return null if all valid or error message otherwise
@@ -51,7 +51,7 @@ exports.validateAttributes = (obj, keys, keysToValidate, allRequired=true) => {
 // allRequired indicates that if a key in keysToValidate is missing from user then an error should
 // be returned
 // keys = objects
-function validateAttributesInternal(obj, keys, allRequired=true, canBeEmpty=false) {
+function validateAttributesInternal(obj, keys, allRequired=true, canBeEmpty) {
     let error;
     for (const key of keys) {
         let value = obj[key.name];

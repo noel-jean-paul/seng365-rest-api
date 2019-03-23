@@ -67,7 +67,7 @@ exports.validateQueryParams = (params) => {
         utils.makeQueryKeyObject('myLongitude', verifyLongitude, 'number')
     ];
 
-    return utils.validateAttributes(params, keys, null, false);
+    return utils.validateAttributes(params, keys, null, false, true);
 };
 
 
