@@ -209,27 +209,51 @@ exports.getAll = async (params) => {
 
     let rows = await db.getPool().query(sql, values)
 
-    // apply startIndex / count
-    console.log('count is', params.count);
-
-    const startIndex = params.startIndex;
-    if (!params.hasOwnProperty('count')) {
-        rows = rows.slice(startIndex);
-    } else {
-        rows = rows.slice(startIndex, startIndex + params.count);  // slice does not include last index
-    }
-
     // Calculate distance and sort by distance
     if (params.hasOwnProperty('myLatitude') && params.hasOwnProperty('myLongitude')) {
         for (let row of rows) {
             row.distance = venueUtils.distance(params.myLatitude, params.myLongitude,
                 row.latitude, row.longitude);
         }
-
-        rows.sort((a,b) => (a.distance > b.distance) ? 1 : ((b.distance > a.distance) ? -1 : 0));
+        if (params.reverseSort === 'false') {
+            // default asc sort
+            rows.sort((a, b) => (a.distance > b.distance) ? 1 : ((b.distance > a.distance) ? -1 : 0));
+        } else {
+            // desc sort
+            rows.sort((a, b) => (a.distance > b.distance) ? -1 : ((b.distance > a.distance) ? 1 : 0));
+        }
     }
 
-    return rows;
+    // apply startIndex / count
+    const startIndex = params.startIndex;
+    if (!params.hasOwnProperty('count')) {
+        rows = rows.slice(startIndex);
+    } else {
+        rows = rows.slice(startIndex, parseInt(startIndex) + parseInt(params.count));  // slice does not include last index
+    }
+
+    // change to res keys
+    let result = [];
+    let resultRow;
+    for (let row of rows) {
+        resultRow = {
+            venueId: row.venue_id,
+            venueName: row.venue_name,
+            categoryId: row.category_id,
+            city: row.city,
+            shortDescription: row.short_description,
+            longDescription: row.long_description,
+            latitude: row.latitude,
+            longitude: row.longitude,
+            meanStarRating: row.mean_star_rating,
+            modeCostRating: row.mode_cost_rating,
+            primaryPhoto: row.primary_photo,
+            distance: row.distance
+        };
+        result.push(resultRow);
+    }
+
+    return result;
 };
 
 function buildQuery(params) {
@@ -242,7 +266,9 @@ function buildQuery(params) {
         'FROM Venue v1 ';
 
     sql = addWhereStatement(params, sql, values);
-    sql = addOrderByStatement(params, sql, values);
+    if (params.sortBy !== 'DISTANCE') { // Distance sorting handled by js later
+        sql = addOrderByStatement(params, sql, values);
+    }
     console.log('sql is', sql);
     console.log('values are', values);
 
@@ -250,13 +276,6 @@ function buildQuery(params) {
         sql: sql,
         values: values
     }
-}
-
-function getDistanceColumnSql(params, values) {
-    let distance = venueUtils.distance(params.myLatitude, params.myLongitude);
-    let sql = `(?) as distance`;
-    values.push(distance);
-    return sql;
 }
 
 function addWhereStatement(params, sql, values) {
@@ -344,10 +363,6 @@ function addOrderByStatement(params, sql, values) {
             COST_RATING: {
                 attribute: 'mode_cost_rating',
                 order: 'ASC'
-            },
-            DISTANCE: {
-                attribute: 'destination',
-                order: 'ASC'
             }
         };
 
@@ -370,24 +385,3 @@ function addOrderByStatement(params, sql, values) {
 
     return sql;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
