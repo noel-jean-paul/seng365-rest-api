@@ -47,3 +47,4 @@ async function setIsPrimaryFalse(venueId) {
 
     await db.getPool().query(sql, values);
 }
+

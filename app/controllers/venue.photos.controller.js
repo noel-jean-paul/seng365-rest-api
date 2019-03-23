@@ -48,8 +48,6 @@ exports.addPhoto = async (req, res) => {
     const image = files.photo;  // always gives first photo
     const venueId = req.params.venueId;
 
-    //console.log('files are', files);
-
     // save photo
     const imageName = `${venueId}_${image.name}`;
     const path = `${basePath}/${imageName}`;
@@ -76,4 +74,21 @@ exports.addPhoto = async (req, res) => {
         return res.status(500)
             .send();
     }
+};
+
+// Get photo
+
+exports.verifyPhotoExists = async (req, res, next) => {
+    if (! fs.existsSync(`${basePath}/${req.params.photoFilename}`)) {
+        res.statusMessage = 'Not Found';
+        res.status(404)
+            .send();
+    }
+
+    next();
+};
+
+exports.retrieve = (req, res) => {
+
+
 };

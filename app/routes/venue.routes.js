@@ -43,4 +43,10 @@ router.route('/:venueId/photos')
         venuePhotos.addPhoto
     );
 
+router.route('/:venueId/photos/:photoFilename')
+    .get(
+        venuePhotos.verifyPhotoExists,
+        venuePhotos.retrieve
+    );
+
 module.exports = router;
