@@ -2,6 +2,18 @@
 
 const utils = require('./utils');
 
+exports.verifyReviewPostAttributes = (review) => {
+    const keys = [
+        utils.makeKeyObject('reviewBody'),
+        utils.makeQueryKeyObject('starRating', (value) => {
+            return checkRange(value, 1, 5)
+        }),
+        utils.makeQueryKeyObject('costRating', validateCostRating)
+    ];
+
+    return utils.validateAttributes(review, keys);
+};
+
 exports.validateAttributes = (venue, allRequired) => {
     // Both post and put for venues change all attributes
     const keys = [

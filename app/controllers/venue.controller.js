@@ -5,19 +5,6 @@ const venueUtils = require('../utils/venue');
 
 const auth = require('../utils/auth');
 
-// Internal helper funcs
-
-async function verifyBodyInternal(body, allRequired) {
-    const errorMsg = venueUtils.validateAttributes(body, allRequired) ||
-        venueUtils.validateLatAndLong(body.latitude, body.longitude);
-    if (errorMsg) {
-        return errorMsg;
-    } else if (body.categoryId && ! (await Venue.getAllCategoryIds()).includes(body.categoryId)) {
-        return 'categoryId does not match any existing category';
-    }
-}
-
-
 // External helper funcs
 exports.verifyVenueExists = async (req, res, next) => {
     if (! await Venue.venueExists(req.params.venueId)) {
@@ -46,6 +33,16 @@ exports.verifyBody = async (req, res, next, allRequired=true) => {
     }
     next();
 };
+
+async function verifyBodyInternal(body, allRequired) {
+    const errorMsg = venueUtils.validateAttributes(body, allRequired) ||
+        venueUtils.validateLatAndLong(body.latitude, body.longitude);
+    if (errorMsg) {
+        return errorMsg;
+    } else if (body.categoryId && ! (await Venue.getAllCategoryIds()).includes(body.categoryId)) {
+        return 'categoryId does not match any existing category';
+    }
+}
 
 
 // Main funcs
