@@ -91,6 +91,11 @@ async function setPrimary(photoFilename) {
     await db.getPool().query(sql, values);
 }
 
+exports.updatePrimary = async (venueId, photoFilename) => {
+    await setIsPrimaryFalse(venueId);
+    await setPrimary(photoFilename);
+};
+
 
 
 

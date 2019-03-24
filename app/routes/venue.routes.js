@@ -60,6 +60,18 @@ router.route('/:venueId/photos/:photoFilename')
         venuePhotos.remove
     );
 
+router.route('/:venueId/photos/:photoFilename/setPrimary')
+    .post(
+        auth.checkToken,
+        venues.verifyVenueExists,
+        venuePhotos.verifyPhotoExists,
+        venuePhotos.verifyPhotoBelongsToVenue,
+        venues.verifyAllowed,
+        venuePhotos.setPrimary
+    );
+
+
+
 module.exports = router;
 
 

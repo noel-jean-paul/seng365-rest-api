@@ -138,6 +138,25 @@ exports.remove = async (req, res) => {
     }
 };
 
+exports.setPrimary = async (req, res) => {
+    console.log('--------POST Set Primary venue photo endpoint--------');
+
+    const venueId = req.params.venueId;
+    const photoFilename = req.params.photoFilename;
+
+    try {
+        await VenuePhotos.updatePrimary(venueId, photoFilename);
+        res.statusMessage = 'OK';
+        res.status(200)
+            .send();
+    } catch (err) {
+        if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Internal server error';
+        return res.status(500)
+            .send();
+    }
+};
+
 
 
 
