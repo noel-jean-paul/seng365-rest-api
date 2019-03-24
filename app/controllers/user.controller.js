@@ -4,6 +4,16 @@ const User = require('../models/user.model');
 const userUtils = require('../utils/user');
 const auth = require('../utils/auth');
 
+exports.verifyUserExists = async (req, res, next) => {
+    if (! await User.checkUserExists(req.params.userId)) {
+        res.statusMessage = 'Not Found';
+        return res.status(404)
+            .send();
+    }
+
+    next();
+};
+
 exports.register = async (req, res) => {
     console.log('-----Register user endpoint------');
 
