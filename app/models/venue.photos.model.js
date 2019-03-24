@@ -48,3 +48,62 @@ async function setIsPrimaryFalse(venueId) {
     await db.getPool().query(sql, values);
 }
 
+
+// Delete
+
+exports.delete = async (venueId, photoFilename) => {
+    const isPrimary = await isPrimaryPhoto(photoFilename);
+
+    // delete the photo
+    const sql = 'DELETE FROM VenuePhoto WHERE photo_filename = (?)';
+    const values = [photoFilename];
+
+    await db.getPool().query(sql, values);
+
+    // choose a new primary photo if we just deleted the current one
+    if (isPrimary) {
+        await setNewPrimary(venueId);
+    }
+};
+
+async function isPrimaryPhoto(photoFilename) {
+    const sql = 'SELECT is_primary FROM VenuePhoto WHERE photo_filename = (?)';
+    const values = [photoFilename];
+
+    const rows = await db.getPool().query(sql, values);
+    return rows.length === 1;
+}
+
+async function setNewPrimary(venueId) {
+    const sql = 'SELECT photo_filename FROM VenuePhoto WHERE venue_id = (?)';
+    const values = [venueId];
+    const rows = await db.getPool().query(sql, values);
+
+    // set a new primary if the venue has other photos
+    if (rows.length > 0) {
+        await setPrimary(rows[0].photo_filename);
+    }
+}
+
+async function setPrimary(photoFilename) {
+    const sql = 'UPDATE VenuePhoto SET is_primary = true WHERE photo_filename = (?)';
+    const values = [photoFilename];
+    await db.getPool().query(sql, values);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

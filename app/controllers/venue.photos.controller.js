@@ -9,13 +9,6 @@ const fileType = require('file-type');
 const basePath = 'app/assets/venues/photos';
 
 
-function verifyBodyInternal(body) {
-    const errorMsg = venueUtils.validatePostPhotoAttributes(body);
-    if (errorMsg) {
-        return errorMsg;
-    }
-}
-
 exports.verifyPostBody = async (req, res, next) => {
     const errorMsg = verifyBodyInternal(req.fields);
     if (errorMsg) {
@@ -35,6 +28,26 @@ exports.verifyPostBody = async (req, res, next) => {
     } else {
         res.statusMessage = 'Bad Request: No image provided';
         return res.status(400)
+            .send();
+    }
+
+    next();
+};
+
+function verifyBodyInternal(body) {
+    const errorMsg = venueUtils.validatePostPhotoAttributes(body);
+    if (errorMsg) {
+        return errorMsg;
+    }
+}
+
+exports.verifyPhotoBelongsToVenue = (req, res, next) => {
+    const venueId = req.params.venueId;
+    const photoFilename = req.params.photoFilename;
+
+    if (venueId !== photoFilename[0]) {
+        res.statusMessage = `Bad Request: Image does not belong to venue ${venueId}`;
+        return res.status(404)
             .send();
     }
 
@@ -101,6 +114,44 @@ exports.retrieve = (req, res) => {
     res.status(200)
         .send(buffer);
 };
+
+
+exports.remove = async (req, res) => {
+    console.log('--------DELETE venue photo endpoint--------');
+
+    const venueId = req.params.venueId;
+    const photoFilename = req.params.photoFilename;
+    const path = `${basePath}/${photoFilename}`;
+
+    // Delete photo
+    try {
+        fs.unlinkSync(path);
+        await VenuePhotos.delete(venueId, photoFilename);   // remove from database
+        res.statusMessage = 'OK';
+        res.status(200)
+            .send();
+    } catch (err) {
+        if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Internal server error';
+        return res.status(500)
+            .send();
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

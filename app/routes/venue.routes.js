@@ -47,7 +47,43 @@ router.route('/:venueId/photos/:photoFilename')
     .get(
         venues.verifyVenueExists,
         venuePhotos.verifyPhotoExists,
+        venuePhotos.verifyPhotoBelongsToVenue,
         venuePhotos.retrieve
+    )
+
+    .delete(
+        auth.checkToken,
+        venues.verifyVenueExists,
+        venuePhotos.verifyPhotoExists,
+        venuePhotos.verifyPhotoBelongsToVenue,
+        venues.verifyAllowed,
+        venuePhotos.remove
     );
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
