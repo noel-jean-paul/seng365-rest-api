@@ -75,6 +75,11 @@ router.route('/:venueId/photos/:photoFilename/setPrimary')
 
 
 router.route('/:venueId/reviews')
+    .get(
+        venues.verifyVenueExists,
+        reviews.retrieveVenueReviews
+    )
+
     .post(
         auth.checkToken,
         venues.verifyVenueExists,

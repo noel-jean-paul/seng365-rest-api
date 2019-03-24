@@ -13,6 +13,36 @@ exports.userHasReviewedVenue = async (userId, venueId) => {
     return rows.length === 1;
 };
 
+exports.getByVenue = async (venueId) => {
+    const sql = 'SELECT * FROM Review ' +
+        'join User u on u.user_id = review_author_id ' +
+        'WHERE reviewed_venue_id = (?) ' +
+        'ORDER BY time_posted DESC';
+    const values = [venueId];
+
+    const rows = await db.getPool().query(sql, values);
+
+    // Process results
+    const result = [];
+    let resultRow;
+    for (const row of rows) {
+        resultRow = {
+            reviewAuthor: {
+                userId: row.user_id,
+                username: row.username
+            },
+            reviewBody: row.review_body,
+            starRating: row.star_rating,
+            costRating: row.cost_rating,
+            timePosted: row.time_posted
+        };
+
+        result.push(resultRow);
+    }
+
+    return result;
+};
+
 exports.insert = async (userId, venueId, data) => {
     const timePosted = moment.utc().format('YYYY-MM-DD hh:mm:ss');
 
@@ -24,3 +54,16 @@ exports.insert = async (userId, venueId, data) => {
 
     await db.getPool().query(sql, values);
 };
+
+
+
+
+
+
+
+
+
+
+
+
+

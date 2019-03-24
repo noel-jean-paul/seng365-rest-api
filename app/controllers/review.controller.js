@@ -33,6 +33,21 @@ exports.verifyPostBody = (req, res, next) => {
     next();
 };
 
+exports.retrieveVenueReviews = async (req, res) => {
+    const venueId = req.params.venueId;
+    try {
+        const result = await Review.getByVenue(venueId);
+        res.statusMessage = 'OK';
+        res.status(200)
+            .json(result);
+    } catch (err) {
+        if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Internal server error';
+        return res.status(500)
+            .send();
+    }
+};
+
 exports.create = async (req, res) => {
     const userId = auth.getAuthenticatedUserId();
     const venueId = req.params.venueId;
@@ -48,3 +63,5 @@ exports.create = async (req, res) => {
             .send();
     }
 };
+
+
