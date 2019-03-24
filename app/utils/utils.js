@@ -89,7 +89,7 @@ exports.makeKeyObject = (name, type='string', lengthChecked=true, backupType, va
 };
 
 exports.makeQueryKeyObject = (name, validate=exports.checkGreaterThanZero, type=Number.isInteger,
-                              backupType='integer', preProcess=parseInt) => {
+                              backupType='integer', preProcess=parseFloat) => {
     return exports.makeKeyObject(name, type, true, backupType, validate, preProcess);
 };
 
