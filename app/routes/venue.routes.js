@@ -85,29 +85,3 @@ router.route('/:venueId/reviews')
 
 
 module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

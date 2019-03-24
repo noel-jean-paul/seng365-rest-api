@@ -34,9 +34,17 @@ exports.verifyPostBody = (req, res, next) => {
 };
 
 exports.create = async (req, res) => {
-
-
-    res.statusMessage = 'Created';
-    res.status(201)
-        .send();
+    const userId = auth.getAuthenticatedUserId();
+    const venueId = req.params.venueId;
+    try {
+        await Review.insert(userId, venueId, req.body);
+        res.statusMessage = 'Created';
+        res.status(201)
+            .send();
+    } catch (err) {
+        if (!err.hasBeenLogged) console.error(err);
+        res.statusMessage = 'Internal server error';
+        return res.status(500)
+            .send();
+    }
 };
