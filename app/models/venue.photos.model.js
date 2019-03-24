@@ -19,7 +19,7 @@ exports.savePhotoPath = async (venueId, path, description, makePrimary) => {
 // determine and action primary
 async function determinePrimary(venueId, makePrimary) {
     let isPrimary = false;
-    if (makePrimary) {
+    if (makePrimary === 'true') {
         await setIsPrimaryFalse(venueId);
         isPrimary = true;
     } else if (! await venueHasPrimaryPhoto(venueId)) {
@@ -31,7 +31,7 @@ async function determinePrimary(venueId, makePrimary) {
 
 // return true if venueId has at least 1 photo
 async function venueHasPrimaryPhoto(venueId) {
-    const sql = 'SELECT venue_id FROM VenuePhoto WHERE venue_id = (?) ' +
+    const sql = 'SELECT venue_id, is_primary FROM VenuePhoto WHERE venue_id = (?) ' +
         'AND is_primary = true';
     const values = [venueId];
 

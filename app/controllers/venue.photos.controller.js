@@ -4,6 +4,7 @@ const VenuePhotos = require('../models/venue.photos.model');
 const venueUtils = require('../utils/venue');
 
 const fs = require('fs');
+const fileType = require('file-type');
 
 const basePath = 'app/assets/venues/photos';
 
@@ -81,7 +82,7 @@ exports.addPhoto = async (req, res) => {
 exports.verifyPhotoExists = async (req, res, next) => {
     if (! fs.existsSync(`${basePath}/${req.params.photoFilename}`)) {
         res.statusMessage = 'Not Found';
-        res.status(404)
+        return res.status(404)
             .send();
     }
 
@@ -89,6 +90,31 @@ exports.verifyPhotoExists = async (req, res, next) => {
 };
 
 exports.retrieve = (req, res) => {
+    console.log('--------GET venue photo endpoint--------');
+    const path = `${basePath}/${req.params.photoFilename}`;
 
+    const buffer = fs.readFileSync(path);
+    const type = fileType(buffer).mime;
 
+    res.statusMessage = 'OK';
+    res.contentType(type);
+    res.status(200)
+        .send(buffer);
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

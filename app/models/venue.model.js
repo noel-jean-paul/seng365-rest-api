@@ -174,7 +174,7 @@ async function addPhotos(venueId) {
     let photos = [];
     for (const row of rows) {
         photo = {
-            photoFileName: row.photo_filename,
+            photoFilename: row.photo_filename,
             photoDescription: row.photo_description,
             isPrimary: row.is_primary === 1
         };

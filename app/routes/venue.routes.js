@@ -45,6 +45,7 @@ router.route('/:venueId/photos')
 
 router.route('/:venueId/photos/:photoFilename')
     .get(
+        venues.verifyVenueExists,
         venuePhotos.verifyPhotoExists,
         venuePhotos.retrieve
     );
