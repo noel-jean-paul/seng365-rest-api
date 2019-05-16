@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import App from './App.vue';
 import Home from './Home.vue';
-import Venues from './Venues.vue';
+import Venues from './Venues/Venues.vue';
 
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);

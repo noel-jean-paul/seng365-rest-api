@@ -5,38 +5,24 @@
     </div>
 
     <b-container>
-      <b-row v-for="venue of venues" class="mt-3">
+      <b-row>
+        <b-col cols="2">
 
-        <b-card no-body class="overflow-hidden custom-horizontal-card">
-          <b-row no-gutters>
+          <div class="mt-4">
+          <b-form-group label="City">
+            <b-form-radio v-for="city of cities" v-model="selectedCity" :value="city">{{ city }}</b-form-radio>
+          </b-form-group>
 
-            <b-col md="6">
-              <b-card-body :title="venue.venueName">
-                <b-card-text>
-                  {{ venue.categoryName }}
-                </b-card-text>
+          <div class="mt-3">Selected: <strong>city1</strong></div>
+          </div>
 
-                <star-rating v-model="venue.meanStarRating"
-                             read-only
-                             :increment="0.01"
-                             class="pt-3"
-                             :star-size="30">
+        </b-col>
 
-                </star-rating>
-              </b-card-body>
-            </b-col>
-
-            <b-col md="6">
-              <b-card-img :src="getPhotoUrl(venue)"
-                          class="rounded-0"
-                          style="max-height: 200px;"
-                          :alt="venue.venueName"
-              >
-              </b-card-img>
-            </b-col>
-
+        <b-col cols="10">
+          <b-row v-for="venue of venues" class="mt-3">
+            <VenueCard :venue="venue"> </VenueCard>
           </b-row>
-        </b-card>
+        </b-col>
 
       </b-row>
     </b-container>
@@ -44,20 +30,22 @@
 </template>
 
 <script>
-  import StarRating from 'vue-star-rating';
+  import VenueCard from './VenueCard';
 
   export default {
     name: "Venues",
 
     components: {
-      StarRating
+      VenueCard
     },
 
     data() {
       return {
-        error: "",
+        error: '',
         errorFlag: false,
-        venues: []
+        venues: [],
+        cities: new Set(),
+        selectedCity: ''
       }
     },
 
@@ -75,10 +63,12 @@
             let venues = result[0];
             const categories = result[1];
 
+            // setup data
             for (const venue of venues) {
+              this.cities.add(venue.city);
               for (const category of categories) {
                 if (venue.categoryId === category.categoryId) {
-                 venue.categoryName = category.categoryName;
+                  venue.categoryName = category.categoryName;
                 }
               }
             }
@@ -108,22 +98,10 @@
             this.errorFlag = true;
           });
       },
-
-      getPhotoUrl: function(venue) {
-        if (venue.primaryPhoto !== null) {
-          return this.$baseUrl + '/venues/' + venue.venueId + '/photos/' + venue.primaryPhoto;
-        } else {
-          return require('./assets/default.png');
-        }
-
-
-      }
     }
   }
 </script>
 
 <style scoped>
-  .custom-horizontal-card {
-    max-width: 540px;
-  }
+
 </style>
