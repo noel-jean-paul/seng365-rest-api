@@ -13,15 +13,26 @@
             <b-col md="6">
               <b-card-body :title="venue.venueName">
                 <b-card-text>
-                  {{ venue.category }}
+                  {{ venue.categoryName }}
                 </b-card-text>
+
+                <star-rating v-model="venue.meanStarRating"
+                             read-only
+                             :increment="0.01"
+                             class="pt-3"
+                             :star-size="30"
+
+                >
+                </star-rating>
               </b-card-body>
             </b-col>
 
             <b-col md="6">
               <b-card-img :src="getPhotoUrl(venue)"
                           class="rounded-0"
-                          style="max-height: 200px;">
+                          style="max-height: 200px;"
+                          :alt="venue.venueName"
+              >
               </b-card-img>
             </b-col>
 
@@ -34,8 +45,14 @@
 </template>
 
 <script>
-	export default {
-		name: "Venues",
+  import StarRating from 'vue-star-rating';
+
+  export default {
+    name: "Venues",
+
+    components: {
+      StarRating
+    },
 
     data() {
       return {
@@ -46,12 +63,28 @@
     },
 
     mounted: function() {
-      this.getVenues();
+      this.getVenueData();
     },
 
     methods: {
-		  getVenues: function() {
-		    return this.axios.get(this.$baseUrl + '/venues')
+      getVenueData: function() {
+        this.getVenues()
+          .then(() => {
+            return this.getCategories()
+          })
+          .then((categories) => {
+            for (const venue of this.venues) {
+              for (const category of categories) {
+                if (venue.categoryId === category.categoryId) {
+                  venue.categoryName = category.categoryName;
+                }
+              }
+            }
+          });
+      },
+
+      getVenues: function() {
+        return this.axios.get(this.$baseUrl + '/venues')
           .then((res) => {
             this.venues = res.data;
           })
@@ -61,18 +94,28 @@
           });
       },
 
+      getCategories: function() {
+        return this.axios.get(this.$baseUrl + '/categories')
+          .then((res) => {
+            return res.data;
+          })
+          .catch((error) => {
+            this.error = error;
+            this.errorFlag = true;
+          });
+      },
+
       getPhotoUrl: function(venue) {
-		    let venueId = venue.venueId;
-		    let photoName = venue.primaryPhoto;
-		    if (photoName === null) {
-          photoName = 'default.png';
-          venueId = '1';
+        if (venue.primaryPhoto !== null) {
+          return this.$baseUrl + '/venues/' + venue.venueId + '/photos/' + venue.primaryPhoto;
+        } else {
+          return require('./assets/default.png');
         }
 
-		    return this.$baseUrl + '/venues/' + venueId + '/photos/' + photoName;
+
       }
     }
-	}
+  }
 </script>
 
 <style scoped>
