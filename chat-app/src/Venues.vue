@@ -20,9 +20,8 @@
                              read-only
                              :increment="0.01"
                              class="pt-3"
-                             :star-size="30"
+                             :star-size="30">
 
-                >
                 </star-rating>
               </b-card-body>
             </b-col>
@@ -68,25 +67,30 @@
 
     methods: {
       getVenueData: function() {
-        this.getVenues()
-          .then(() => {
-            return this.getCategories()
-          })
-          .then((categories) => {
-            for (const venue of this.venues) {
+        return Promise.all([
+          this.getVenues(),
+          this.getCategories()
+        ])
+          .then((result) => {
+            let venues = result[0];
+            const categories = result[1];
+
+            for (const venue of venues) {
               for (const category of categories) {
                 if (venue.categoryId === category.categoryId) {
-                  venue.categoryName = category.categoryName;
+                 venue.categoryName = category.categoryName;
                 }
               }
             }
+
+            this.venues = venues;   // replace array to trigger dom update
           });
       },
 
       getVenues: function() {
         return this.axios.get(this.$baseUrl + '/venues')
           .then((res) => {
-            this.venues = res.data;
+            return res.data;
           })
           .catch((error) => {
             this.error = error;
