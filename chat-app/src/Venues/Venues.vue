@@ -63,7 +63,6 @@
 
     methods: {
       getVenueData: function(city) {
-        console.log("getting venue data");
         return Promise.all([
           this.getVenues(city),
           this.getCategories()
@@ -81,7 +80,6 @@
               }
             }
 
-            console.log("setting venues", venues);
             this.venues = venues;   // replace array to trigger dom update
           });
       },
@@ -131,7 +129,6 @@
       },
 
       onCityChange: function(selected) {
-        console.log("city change", "selected");
         this.getVenueData(selected)
           .then(() => {
             this.selectedCity = selected;

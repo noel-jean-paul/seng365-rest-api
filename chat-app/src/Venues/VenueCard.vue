@@ -40,6 +40,11 @@
                 </star-rating>
               </b-col>
             </b-row>
+
+            <b-row>
+              <b-button variant="info" v-on:click="onDetailsClick"> Details </b-button>
+            </b-row>
+
           </b-container>
         </b-card-body>
       </b-col>
@@ -59,27 +64,31 @@
 <script>
   import StarRating from 'vue-star-rating';
 
-	export default {
-		name: "VenueCard",
+  export default {
+    name: "VenueCard",
 
     components: {
-		  StarRating
+      StarRating
     },
 
-    props: [
-      'venue',
-    ],
+    props: {
+      venue: Object,
+    },
 
     methods: {
-      getPhotoUrl: function (venue) {
+      getPhotoUrl: function(venue) {
         if (venue.primaryPhoto !== null) {
           return this.$baseUrl + '/venues/' + venue.venueId + '/photos/' + venue.primaryPhoto;
         } else {
           return require('../assets/default.png');
         }
+      },
+
+      onDetailsClick: function() {
+        this.$router.push({ name: 'venue', params: { venueId: this.venue.venueId } });
       }
     }
-	}
+  }
 </script>
 
 <style scoped>
