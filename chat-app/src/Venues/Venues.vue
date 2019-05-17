@@ -13,6 +13,8 @@
               <b-form-radio v-for="city of cities"
                             v-model="selectedCity"
                             :value="city"
+                            :key="city"
+                            v-on:change="onCityChange"
                             >
                 {{ city }}
                 </b-form-radio>
@@ -22,7 +24,7 @@
         </b-col>
 
         <b-col cols="10">
-          <b-row v-for="venue of venues" class="mt-3">
+          <b-row v-for="venue of venues" class="mt-3" :key="venue.venue_id">
             <VenueCard :venue="venue"> </VenueCard>
           </b-row>
         </b-col>
@@ -34,7 +36,6 @@
 
 <script>
   import VenueCard from './VenueCard';
-  import _ from 'lodash';
 
   export default {
     name: "Venues",
@@ -61,9 +62,10 @@
     },
 
     methods: {
-      getVenueData: function() {
+      getVenueData: function(city) {
+        console.log("getting venue data");
         return Promise.all([
-          this.getVenues(),
+          this.getVenues(city),
           this.getCategories()
         ])
           .then((result) => {
@@ -79,13 +81,14 @@
               }
             }
 
+            console.log("setting venues", venues);
             this.venues = venues;   // replace array to trigger dom update
           });
       },
 
       getVenues: function(city) {
         let params = '';
-        if (city !== undefined) {
+        if (city !== undefined && city !== "All cities") {
           params = `?city=${city}`;
         }
 
@@ -118,7 +121,6 @@
             let tmpCities = [].concat(this.cities);
 
             for (const venue of venues) {
-              console.log(venue.city, tmpCities);
               if (!tmpCities.includes(venue.city)) {
                 tmpCities.push(venue.city);
               }
@@ -128,9 +130,13 @@
           })
       },
 
-      // onCityChange: function() {
-      //   this.getVenueData();
-      // }
+      onCityChange: function(selected) {
+        console.log("city change", "selected");
+        this.getVenueData(selected)
+          .then(() => {
+            this.selectedCity = selected;
+          });
+      }
     }
   }
 </script>
