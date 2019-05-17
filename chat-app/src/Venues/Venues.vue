@@ -9,11 +9,14 @@
         <b-col cols="2">
 
           <div class="mt-4">
-          <b-form-group label="City">
-            <b-form-radio v-for="city of cities" v-model="selectedCity" :value="city">{{ city }}</b-form-radio>
-          </b-form-group>
-
-          <div class="mt-3">Selected: <strong>city1</strong></div>
+            <b-form-group label="City">
+              <b-form-radio v-for="city of cities"
+                            v-model="selectedCity"
+                            :value="city"
+                            >
+                {{ city }}
+                </b-form-radio>
+            </b-form-group>
           </div>
 
         </b-col>
@@ -31,6 +34,7 @@
 
 <script>
   import VenueCard from './VenueCard';
+  import _ from 'lodash';
 
   export default {
     name: "Venues",
@@ -44,13 +48,16 @@
         error: '',
         errorFlag: false,
         venues: [],
-        cities: new Set(),
-        selectedCity: ''
+        cities: ['All cities'],
+        selectedCity: 'All cities'
       }
     },
 
     mounted: function() {
-      this.getVenueData();
+      Promise.all([
+        this.getVenueData(),
+        this.getCities()
+      ]);
     },
 
     methods: {
@@ -65,7 +72,6 @@
 
             // setup data
             for (const venue of venues) {
-              this.cities.add(venue.city);
               for (const category of categories) {
                 if (venue.categoryId === category.categoryId) {
                   venue.categoryName = category.categoryName;
@@ -77,8 +83,13 @@
           });
       },
 
-      getVenues: function() {
-        return this.axios.get(this.$baseUrl + '/venues')
+      getVenues: function(city) {
+        let params = '';
+        if (city !== undefined) {
+          params = `?city=${city}`;
+        }
+
+        return this.axios.get(`${this.$baseUrl}/venues${params}`)
           .then((res) => {
             return res.data;
           })
@@ -98,6 +109,28 @@
             this.errorFlag = true;
           });
       },
+
+      getCities: function() {
+        // how to deeep copy JSON.parse(JSON.stringify(this.cities))
+
+        return this.getVenues()
+          .then((venues) => {
+            let tmpCities = [].concat(this.cities);
+
+            for (const venue of venues) {
+              console.log(venue.city, tmpCities);
+              if (!tmpCities.includes(venue.city)) {
+                tmpCities.push(venue.city);
+              }
+            }
+
+            this.cities = tmpCities;
+          })
+      },
+
+      // onCityChange: function() {
+      //   this.getVenueData();
+      // }
     }
   }
 </script>

@@ -43,17 +43,16 @@
           </b-container>
         </b-card-body>
       </b-col>
+
+      <b-col md="5">
+        <b-card-img :src="getPhotoUrl(venue)"
+                    class="rounded-0"
+                    style="max-height: 200px;"
+                    :alt="venue.venueName"
+        >
+        </b-card-img>
+      </b-col>
     </b-row>
-
-    <b-col md="5">
-      <b-card-img :src="getPhotoUrl(venue)"
-                  class="rounded-0"
-                  style="max-height: 200px;"
-                  :alt="venue.venueName"
-      >
-      </b-card-img>
-    </b-col>
-
   </b-card>
 </template>
 
