@@ -2,7 +2,7 @@ import Vue from 'vue';
 import App from './App.vue';
 import Home from './Home.vue';
 import Venues from './Venues/Venues.vue';
-import Venue from './Venues/Venue.vue';
+import Venue from './Venues/SingleVenue/Venue.vue';
 
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);

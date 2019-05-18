@@ -17,10 +17,10 @@
     </b-row>
 
     <b-row>
-      <b-col class="center-vert" xs="2">
+      <b-col class="center-vert text-right" xs="2">
         Cost:
       </b-col>
-      <b-col  xs="10">
+      <b-col class="float-left" xs="10">
         <star-rating v-model="venue.modeCostRating"
                      read-only
                      :increment="0.01"
