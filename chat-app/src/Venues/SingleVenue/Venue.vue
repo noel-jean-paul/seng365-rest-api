@@ -12,7 +12,7 @@
         </b-col>
 
         <b-col cols="6">
-          <VenuePhotos :venue="venue"/>
+          <VenuePhotos :venue="venue" class="mt-4"/>
         </b-col>
       </b-row>
     </b-container>

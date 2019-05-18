@@ -1,22 +1,31 @@
 <template>
-    <b-card-group>
-      <b-card v-for="photo of venue.photos"
-              :key="photo.photoFilename"
-              :img-src="$baseUrl + '/venues/' + venue.venueId + '/photos/' +
+  <div id="venuePhotos">
+    <div v-masonry transition-duration="0.3s" item-selector=".item">
+      <div v-masonry-tile class="item"
+           v-for="(photo, index) of venue.photos"
+           :key="index"
+      >
+        <img
+            class='mb-2'
+             :src="$baseUrl + '/venues/' + venue.venueId + '/photos/' +
               photo.photoFilename"
-              :img-alt="photo.photoDescription"
-              />
-    </b-card-group>
+             :alt="photo.photoDescription"
+        />
+      </div>
+    </div>
+
+
+  </div>
 </template>
 
 <script>
-	export default {
-		name: "VenuePhotos",
+  export default {
+    name: "VenuePhotos",
 
     props: {
-		  venue: Object
+      venue: Object
     }
-	}
+  }
 </script>
 
 <style scoped>

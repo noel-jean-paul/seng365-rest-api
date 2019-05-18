@@ -17,6 +17,12 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 Vue.use(VueAxios, axios);
 
+import {VueMasonryPlugin} from 'vue-masonry';
+Vue.use(VueMasonryPlugin);
+
+import Vuetify from 'vuetify';
+Vue.use(Vuetify);
+
 Vue.prototype.$baseUrl = 'http://localhost:4941/api/v1';
 
 const routes = [
