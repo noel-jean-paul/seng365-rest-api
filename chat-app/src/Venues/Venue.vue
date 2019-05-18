@@ -1,20 +1,15 @@
 <template>
   <div id='venue'>
 
+    <div v-if="errorFlag" style="color: red;">
+      {{ error }}
+    </div>
+
   <b-card>
 
     <b-card-body>
       <b-card-title>{{ venue.venueName }}</b-card-title>
       <b-card-sub-title class="mb-4">{{ venue.category.categoryName }}</b-card-sub-title>
-      <b-card-text>
-        {{ venue.shortDescription}}
-        <div v-if="venue.longDescription !== ''">
-        <b-link @click="showCollapse = !showCollapse">{{ showCollapse ? 'show less' : 'show more' }}</b-link>
-        <b-collapse v-model="showCollapse" class="mt-2">
-          <b-card-text>{{ venue.longDescription }}</b-card-text>
-        </b-collapse>
-        </div>
-      </b-card-text>
     </b-card-body>
 
     <b-list-group flush>
@@ -25,13 +20,20 @@
     </b-list-group>
 
     <b-card-body>
-      <a href="#" class="card-link">Card link</a>
-      <a href="#" class="card-link">Another link</a>
+      <b-card-text>
+        {{ venue.shortDescription}}
+        <div v-if="venue.longDescription !== ''">
+          <b-link @click="showCollapse = !showCollapse">{{ showCollapse ? 'show less' : 'show more' }}</b-link>
+          <b-collapse v-model="showCollapse" class="mt-2">
+            <b-card-text>{{ venue.longDescription }}</b-card-text>
+          </b-collapse>
+        </div>
+      </b-card-text>
+
+      <Ratings :venue="venue"/>
+
     </b-card-body>
 
-    <b-card-footer>This is a footer</b-card-footer>
-
-    <b-card-img src="https://placekitten.com/480/210" alt="Image" bottom></b-card-img>
   </b-card>
 
   </div>
@@ -40,34 +42,77 @@
 
 <script>
   import InfoRow from '../display/InfoRow.vue'
+  import Ratings from './Ratings.vue';
 
   export default {
     name: "Venue",
 
     components: {
-      InfoRow
+      InfoRow,
+      Ratings
     },
 
     data() {
       return {
         venue: null,
-        showCollapse: false
+        showCollapse: false,
+        error: '',
+        errorFlag: false
       }
     },
 
     mounted() {
-      this.getVenue()
+      this.getVenueData()
         .then(() => {
-          console.log(this.venue);
         })
     },
 
     methods: {
+      getVenueData() {
+        return Promise.all([
+          this.getAllVenues(),
+          this.getVenue()
+        ])
+          .then((result) =>{
+            const venues = result[0];
+            let singleVenue = result[1];
+
+            console.log('venues', venues);
+            console.log('venue', singleVenue);
+
+            for (const venue of venues) {
+              const id = venue.venueId.toString();
+              const routeId = this.$route.params.venueId;
+              if (id === routeId) {
+                singleVenue = { ...venue, ...singleVenue};
+                break;
+              }
+            }
+
+            this.venue = singleVenue;
+        });
+      },
+
+      getAllVenues() {
+        return this.axios.get(`${this.$baseUrl}/venues`)
+          .then((res) => {
+            return res.data;
+          })
+          .catch((error) => {
+            this.error = error;
+            this.errorFlag = true;
+          });
+      },
+
       getVenue() {
         return this.axios.get(this.$baseUrl + '/venues/' + this.$route.params.venueId)
           .then((res) => {
-            this.venue = res.data;
-        });
+            return res.data;
+        })
+          .catch((error) => {
+            this.error = error;
+            this.errorFlag = true;
+          });
       }
     }
   }

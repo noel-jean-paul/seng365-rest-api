@@ -9,37 +9,7 @@
           </b-card-text>
 
           <b-container>
-            <b-row>
-              <b-col class="center-vert" xs="2">
-                Quality:
-              </b-col>
-              <b-col  xs="10">
-                <star-rating v-model="venue.meanStarRating"
-                             read-only
-                             :increment="0.01"
-                             class="pt-3"
-                             :star-size="30"
-
-                >
-                </star-rating>
-              </b-col>
-            </b-row>
-
-            <b-row>
-              <b-col class="center-vert" xs="2">
-                Cost:
-              </b-col>
-              <b-col  xs="10">
-                <star-rating v-model="venue.modeCostRating"
-                             read-only
-                             :increment="0.01"
-                             class="pt-3"
-                             :star-size="30"
-                             active-color="orange"
-                >
-                </star-rating>
-              </b-col>
-            </b-row>
+            <Ratings :venue="venue"></Ratings>
 
             <b-row>
               <b-button variant="info" v-on:click="onDetailsClick"> Details </b-button>
@@ -62,13 +32,13 @@
 </template>
 
 <script>
-  import StarRating from 'vue-star-rating';
+  import Ratings from './Ratings.vue';
 
   export default {
     name: "VenueCard",
 
     components: {
-      StarRating
+      Ratings
     },
 
     props: {
@@ -94,11 +64,5 @@
 <style scoped>
   .custom-horizontal-card {
     max-width: 650px;
-  }
-
-  .center-vert {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
   }
 </style>
