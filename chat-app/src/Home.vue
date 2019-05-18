@@ -1,30 +1,45 @@
 <template>
   <div>
+
+    <b-form class="mt-2 ml-2">
     <b-form-group
       label="Given name"
       :invalid-feedback="invalidFNameFeedback"
 
       :state="fNameState"
     >
-      <b-form-input v-model="fName" :state="fNameState" trim></b-form-input>
+      <b-form-input v-model="fName"
+                    :state="fNameState"
+                    trim
+                    placeholder="Given name"
+      ></b-form-input>
     </b-form-group>
 
     <b-form-group
       label="Family name"
-      :invalid-feedback="invalidFNameFeedback"
+      :invalid-feedback="invalidLNameFeedback"
       :state="lNameState"
     >
-      <b-form-input v-model="lName" :state="lNameState" trim></b-form-input>
+      <b-form-input v-model="lName"
+                    :state="lNameState"
+                    trim
+                    placeholder="Family name"
+      ></b-form-input>
     </b-form-group>
 
-    <!--<b-form-group-->
-      <!--label="Email"-->
-      <!--:invalid-feedback="invalidFeedback"-->
 
-      <!--:state="state"-->
-    <!--&gt;-->
-      <!--<b-form-input v-model="email" :state="state" trim></b-form-input>-->
-    <!--</b-form-group>-->
+    <b-form-group
+      label="Email"
+      :invalid-feedback="invalidEmailFeedback"
+      :state="emailState"
+    >
+      <b-form-input v-model="email"
+                    :state="emailState"
+                    type="email"
+                    trim
+                    placeholder="Email"
+      ></b-form-input>
+    </b-form-group>
 
     <!--<b-form-group-->
       <!--label="Username"-->
@@ -41,6 +56,7 @@
     <!--&gt;-->
       <!--<b-form-input v-model="password" :state="state" trim></b-form-input>-->
     <!--</b-form-group>-->
+    </b-form>
   </div>
 </template>
 
@@ -82,6 +98,8 @@
           return '';
         }
       },
+
+      invalidEmailFeedback
     }
   }
 </script>
