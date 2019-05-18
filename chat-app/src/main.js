@@ -23,6 +23,8 @@ Vue.use(VueMasonryPlugin);
 import Vuetify from 'vuetify';
 Vue.use(Vuetify);
 
+import 'vuetify/dist/vuetify.min.css'
+
 Vue.prototype.$baseUrl = 'http://localhost:4941/api/v1';
 
 const routes = [

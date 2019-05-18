@@ -59,9 +59,10 @@
             let singleVenue = result[1];
 
             for (const venue of venues) {
-              const id = venue.venueId.toString();
+              const id = venue.venueId;
               const routeId = this.$route.params.venueId;
               if (id === routeId) {
+                console.log('in the if');
                 singleVenue = { ...venue, ...singleVenue};
                 break;
               }
