@@ -1,8 +1,12 @@
 <template>
-  <div id="venuePhotos" v-if="venue != null && venue.venueId !== undefined">
+  <div id="venuePhotos">
+    <div v-if="venue.photos.length > 0">
+
     <v-layout>
       <v-flex offset-sm3>
         <v-card>
+
+
           <v-container grid-list-sm fluid>
             <v-layout row wrap>
               <v-flex
@@ -34,9 +38,15 @@
               </v-flex>
             </v-layout>
           </v-container>
+
         </v-card>
       </v-flex>
     </v-layout>
+
+  </div>
+  <div v-else>
+    <h3> This venue has no photos </h3>
+  </div>
 
   </div>
 </template>

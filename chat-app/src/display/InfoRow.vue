@@ -1,11 +1,9 @@
 <template>
-  <b-container>
     <b-row>
       <b-col :cols="labelWidth"
              class="InfoRow text-right"> {{ title }} </b-col>
       <b-col> <slot></slot> </b-col>
     </b-row>
-  </b-container>
 
 </template>
 
@@ -16,7 +14,7 @@
     props: {
       labelWidth: {
         type: Number,
-        default: 3
+        default: 2
       },
       title: String
     }
