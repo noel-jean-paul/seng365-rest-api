@@ -1,8 +1,15 @@
 <template>
   <div>
-    Home
+    <b-container>
+      <b-card
+        title="Log in"
+      >
 
-    <b-button @click="showModal = !showModal">Register</b-button>
+        <b-button @click="login">Log in</b-button>
+        <b-button @click="showModal = !showModal">Register</b-button>
+      </b-card>
+
+    </b-container>
 
     <b-modal v-model="showModal"
              title="Registration Form"
