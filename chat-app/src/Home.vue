@@ -114,6 +114,15 @@
       }
     },
 
+    mounted() {
+      this.$cookies.config({ expires: "7d" }) // set cookie config
+
+      // // move off the login page if the user is already authenticated
+      // if (this.$cookies.get('token')) {
+      //   this.$router.push({ name: 'venues' });
+      // }
+    },
+
     methods: {
       onSubmit() {
         this.duplicateEmail = false;
@@ -123,9 +132,17 @@
           this.createUser()
             .then((response) => {
               console.log('user created', response);
+
+              // Set cookie
+              const userId = response.data.userId.toString();
+              this.$cookies.set('token', userId);
+              console.log(this.$cookies.get(userId));
+
+              this.$router.push({ name: 'venues'});
             })
-            .catch(() => {
+            .catch((error) => {
               // 400 returned
+              console.log(error);
               console.log('400: duplicate email or username');
               this.duplicateEmail = true;
             });

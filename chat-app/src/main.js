@@ -21,11 +21,14 @@ import {VueMasonryPlugin} from 'vue-masonry';
 Vue.use(VueMasonryPlugin);
 
 import Vuetify from 'vuetify';
+import 'vuetify/dist/vuetify.min.css'
 Vue.use(Vuetify);
 
-import 'vuetify/dist/vuetify.min.css'
+import VueCookies from 'vue-cookies-ts';
+Vue.use(VueCookies);
 
 Vue.prototype.$baseUrl = 'http://localhost:4941/api/v1';
+
 
 const routes = [
   {
