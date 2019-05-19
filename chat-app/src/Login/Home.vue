@@ -4,9 +4,48 @@
       <b-card
         title="Log in"
       >
+        <b-card-text>
+          Enter either your email or username, and password
+        </b-card-text>
 
-        <b-button @click="login">Log in</b-button>
+
+
+        <b-form-group
+          label="Email"
+        >
+          <b-form-input v-model="email"
+                        type="email"
+                        trim
+                        placeholder="Email"
+          ></b-form-input>
+        </b-form-group>
+
+        <b-form-group
+          label="Username"
+        >
+          <b-form-input v-model="username"
+                        placeholder="Username"
+                        trim
+          ></b-form-input>
+        </b-form-group>
+
+        <b-form-group
+          label="Password"
+        >
+          <b-form-input v-model="password"
+                        placeholder="Password"
+                        type="password"
+                        trim
+                        required
+          ></b-form-input>
+        </b-form-group>
+
+        <b-button @click="login" variant="primary">Log in</b-button>
         <b-button @click="showModal = !showModal">Register</b-button>
+
+        <div class="text-danger" v-if="badCredentials">
+          Bad credentials
+        </div>
       </b-card>
 
     </b-container>
@@ -35,6 +74,10 @@
 
     data() {
       return {
+        email: '',
+        username: '',
+        password: '',
+        badCredentials: false,
         showModal: false
       }
     },
@@ -47,6 +90,27 @@
       //   this.$router.push({ name: 'venues' });
       // }
     },
+
+    methods: {
+      login() {
+        console.log('logging in');
+        this.axios.post(`${this.$baseUrl}/users/login`, {
+          username: this.username,
+          email: this.email,
+          password: this.password
+        })
+          .then((response) => {
+            this.$cookies.set('token', response.data.token);
+            console.log(this.$cookies.get('token'));
+            this.$router.push({ name: 'venues'});
+          })
+          .catch((response) => {
+            console.log(response);
+            this.badCredentials = true;
+        });
+
+      }
+    }
   }
 </script>
 

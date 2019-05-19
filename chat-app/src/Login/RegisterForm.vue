@@ -91,9 +91,9 @@
 
       <b-button type="submit" variant="primary">Submit</b-button>
 
-      <b-form-invalid-feedback :state="uniquenessValidation">
+      <div class="text-danger" v-if="duplicateEmail">
         Email or username is already in use
-      </b-form-invalid-feedback>
+      </div>
 
 
     </b-form>
@@ -127,8 +127,8 @@
 
               // Set cookie
               const userId = response.data.userId.toString();
-              this.$cookies.set('token', userId);
-              console.log(this.$cookies.get(userId));
+              this.$cookies.set('token', response.data.token);
+              console.log(this.$cookies.get('token'));
 
               this.$router.push({ name: 'venues'});
             })
@@ -179,10 +179,6 @@
     },
 
     computed: {
-      uniquenessValidation() {
-        return !this.duplicateEmail;  // fail validation if email/username duplicate
-      },
-
       fNameState() {
         return this.fName.length >= 2;
       },
