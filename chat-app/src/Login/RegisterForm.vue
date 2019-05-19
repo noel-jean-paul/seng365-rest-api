@@ -1,7 +1,6 @@
 <template>
-  <div>
 
-    <b-form class="mt-2 ml-2" @submit.stop.prevent="onSubmit">
+    <b-form @submit.stop.prevent="onSubmit">
       <b-form-group
         label="Given name"
         :invalid-feedback="invalidFNameFeedback"
@@ -91,16 +90,18 @@
       </b-form-group>
 
       <b-button type="submit" variant="primary">Submit</b-button>
+
       <b-form-invalid-feedback :state="uniquenessValidation">
         Email or username is already in use
       </b-form-invalid-feedback>
+
+
     </b-form>
-  </div>
 </template>
 
 <script>
   export default {
-    name: "Home",
+    name: "RegisterForm",
 
     data() {
       return {
@@ -112,15 +113,6 @@
         confirmPassword: '',
         duplicateEmail: false
       }
-    },
-
-    mounted() {
-      this.$cookies.config({ expires: "7d" }) // set cookie config
-
-      // // move off the login page if the user is already authenticated
-      // if (this.$cookies.get('token')) {
-      //   this.$router.push({ name: 'venues' });
-      // }
     },
 
     methods: {
