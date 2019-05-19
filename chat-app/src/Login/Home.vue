@@ -86,9 +86,9 @@
       this.$cookies.config({ expires: "7d" }) // set cookie config
 
       // // move off the login page if the user is already authenticated
-      // if (this.$cookies.get('token')) {
-      //   this.$router.push({ name: 'venues' });
-      // }
+      if (this.$cookies.isKey('token')) {
+        this.$router.push({ name: 'venues' });
+      }
     },
 
     methods: {

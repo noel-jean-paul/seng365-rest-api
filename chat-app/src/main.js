@@ -33,7 +33,7 @@ Vue.prototype.$baseUrl = 'http://localhost:4941/api/v1';
 const routes = [
   {
     path: '/',
-    name: 'login',
+    name: 'home',
     component: Home
   },
   {

@@ -4,7 +4,7 @@
       <b-navbar toggleable="lg" type="dark" variant="info">
         <b-navbar-brand>
           <router-link class="custom-router-link"
-                       :to="{ name: 'login' }"
+                       :to="{ name: 'home' }"
           >
             TravelEA
           </router-link>
@@ -21,8 +21,15 @@
             <b-nav-item-dropdown right>
               <!-- Using 'button-content' slot -->
               <template slot="button-content"><em>User</em></template>
-              <b-dropdown-item href='/'>Switch user</b-dropdown-item>
-              <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+
+              <b-dropdown-item v-if="$cookies.isKey('token')"
+                               @click="signOut"
+              >Log Out</b-dropdown-item>
+
+              <b-dropdown-item v-else
+                               @click="signIn"
+              >Log in</b-dropdown-item>
+
             </b-nav-item-dropdown>
           </b-navbar-nav>
 
@@ -36,7 +43,18 @@
 
 <script>
 export default {
-  name: 'app'
+  name: 'app',
+
+  methods: {
+    signIn() {
+      this.$router.push({ name: 'home' })
+    },
+
+    signOut() {
+      this.$cookies.remove('token');
+      this.$router.push({ name: 'home' });
+    }
+  }
 }
 </script>
 
