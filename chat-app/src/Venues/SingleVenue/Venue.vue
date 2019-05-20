@@ -12,7 +12,7 @@
         </b-col>
 
         <b-col cols="6">
-          <VenuePhotos :venue="venue" class="mt-4" @reload-required="refreshData"/>
+          <VenuePhotos :venue="venue" :isAdmin=isAdmin class="mt-4" @reload-required="refreshData"/>
         </b-col>
       </b-row>
     </b-container>
@@ -24,6 +24,7 @@
 <script>
   import VenueDetails from './VenueDetails';
   import VenuePhotos from './VenuePhotos';
+  import authUtils from '../../utils/authUtils';
 
   export default {
     name: "Venue",
@@ -37,7 +38,8 @@
       return {
         venue: null,
         error: '',
-        errorFlag: false
+        errorFlag: false,
+        isAdmin: false
       }
     },
 
@@ -51,7 +53,8 @@
         return this.getVenueData()
           .then((venue) => {
             this.venue = venue;
-          })
+            this.isAdmin = authUtils.isAuthenticated(this, venue.admin.userId);
+          });
       },
 
       getVenueData() {

@@ -73,13 +73,15 @@
       </b-container>
 
       <div slot="modal-footer">
-        <b-button variant="primary"
-                  @click="makePrimary"
-                  :disabled="modalPhoto.isPrimary"
-        > Make primary </b-button>
-        <b-button variant="danger"
-                  @click="deletePhoto"
-        > Delete </b-button>
+        <div v-if="isAdmin">
+          <b-button variant="primary"
+                    @click="makePrimary"
+                    :disabled="modalPhoto.isPrimary"
+          > Make primary </b-button>
+          <b-button variant="danger"
+                    @click="deletePhoto"
+          > Delete </b-button>
+        </div>
       </div>
     </b-modal>
 
@@ -98,13 +100,13 @@
     data() {
       return {
         showPhotoModal: false,
-        modalPhoto: null,
-        isAdmin: authUtils.isAuthenticated(this, this.venue.admin.userId)
+        modalPhoto: null
       }
     },
 
     props: {
-      venue: Object
+      venue: Object,
+      isAdmin: Boolean
     },
 
     components: {
