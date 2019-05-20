@@ -3,10 +3,15 @@ exports.getCookie = (vue) => {
 };
 
 exports.isAuthenticated = (vue, userId) => {
-  const cookieId = vue.$cookies.get('token').userId;
-  console.log(typeof userId, userId, typeof cookieId, cookieId);
+  if (vue.$cookies.isKey('token')) {
+    return userId === vue.$cookies.get('token').userId;
+  } else {
+    return false;
+  }
+};
 
-  return userId === vue.$cookies.get('token').userId;
+exports.getAuthedUserId = (vue) => {
+  return vue.$cookies.get('token').userId;
 };
 
 exports.setCookie = (vue, userId, token) => {

@@ -19,9 +19,16 @@
                 {{ city }}
                 </b-form-radio>
             </b-form-group>
+
+            <b-form-checkbox v-model="adminOnly"
+                             v-on:change="onAdminChange"
+                             v-if="$cookies.isKey('token')"
+            >
+              Show only my venues
+            </b-form-checkbox>
           </div>
 
-          <CreateVenue/>
+          <CreateVenue class="mt-4"/>
 
         </b-col>
 
@@ -39,6 +46,7 @@
 <script>
   import VenueCard from './VenueCard';
   import CreateVenue from './CreateVenue';
+  import authUtils from '../utils/authUtils';
 
   export default {
     name: "Venues",
@@ -54,7 +62,8 @@
         errorFlag: false,
         venues: [],
         cities: ['All cities'],
-        selectedCity: 'All cities'
+        selectedCity: 'All cities',
+        adminOnly: false
       }
     },
 
@@ -89,9 +98,13 @@
       },
 
       getVenues: function(city) {
-        let params = '';
+        let params = '?';
         if (city !== undefined && city !== "All cities") {
-          params = `?city=${city}`;
+          params += `city=${city}&`;
+        }
+
+        if (this.adminOnly) {
+          params += `adminId=${authUtils.getAuthedUserId(this)}`;
         }
 
         return this.axios.get(`${this.$baseUrl}/venues${params}`)
@@ -137,6 +150,11 @@
           .then(() => {
             this.selectedCity = selected;
           });
+      },
+
+      onAdminChange: function(checked) {
+        this.adminOnly = checked;
+        this.getVenueData(this.selectedCity)
       }
     }
   }
