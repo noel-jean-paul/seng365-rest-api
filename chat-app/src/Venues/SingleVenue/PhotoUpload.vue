@@ -15,6 +15,14 @@
           drop-placeholder="Drop file here..."
         ></b-form-file>
 
+        <b-form-checkbox v-if="hasPhotos"
+          v-model="makePrimary"
+        >
+          Make primary photo
+        </b-form-checkbox>
+
+
+
         <b-button class="mt-2" variant="primary" @click="upload"> Upload </b-button>
 
       </b-container>
@@ -29,15 +37,20 @@
     data() {
       return {
         showModal: false,
-        file: null
+        file: null,
+        makePrimary: false
       }
+    },
+
+    props: {
+      hasPhotos: Boolean
     },
 
     methods: {
       upload() {
         const bodyFormData = new FormData();
         bodyFormData.set('description', '');
-        bodyFormData.set('makePrimary', false);
+        bodyFormData.set('makePrimary', this.makePrimary);
         bodyFormData.append('photo', this.file);
 
         const baseUrl = this.$baseUrl;

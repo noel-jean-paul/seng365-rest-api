@@ -42,7 +42,7 @@
 
         </v-card>
 
-        <PhotoUpload class="mt-2" @upload="$emit('upload')"/>
+        <PhotoUpload class="mt-2" @upload="$emit('upload')" :hasPhotos="venue.photos.length > 0"/>
 
       </v-flex>
     </v-layout>
@@ -50,6 +50,7 @@
   </div>
   <div v-else>
     <h3> This venue has no photos </h3>
+    <PhotoUpload class="mt-2" @upload="$emit('upload')" :hasPhotos="venue.photos.length > 0"/>
   </div>
 
   </div>
@@ -67,13 +68,6 @@
 
     components: {
       PhotoUpload
-    },
-
-    methods: {
-      go() {
-        console.log("emitting");
-        this.$emit('upload');
-      }
     }
   }
 </script>
