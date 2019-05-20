@@ -12,7 +12,7 @@
         </b-col>
 
         <b-col cols="6">
-          <VenuePhotos :venue="venue" class="mt-4"/>
+          <VenuePhotos :venue="venue" class="mt-4" @upload="refreshData"/>
         </b-col>
       </b-row>
     </b-container>
@@ -42,15 +42,19 @@
     },
 
     mounted() {
-      return this.getVenueData()
-        .then((venue) => {
-          this.venue = venue;
-        })
+      this.refreshData();
     },
 
     methods: {
+      refreshData() {
+        console.log('refreshing');
+        return this.getVenueData()
+          .then((venue) => {
+            this.venue = venue;
+          })
+      },
+
       getVenueData() {
-        console.log("getting venue");
         return Promise.all([
           this.getAllVenues(),
           this.getVenue()
@@ -62,15 +66,12 @@
             for (const venue of venues) {
               const id = venue.venueId.toString();
               const routeId = this.$route.params.venueId;
-              console.log(typeof id, typeof routeId);
               if (id === routeId) {  // venueId is a string if you reload but num in you come from another page
-                //console.log('in the if');
                 singleVenue = { ...venue, ...singleVenue};
                 break;
               }
             }
 
-            console.log("returning");
             return singleVenue;
           });
       },

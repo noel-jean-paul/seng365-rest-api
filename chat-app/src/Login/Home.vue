@@ -93,7 +93,6 @@
 
     methods: {
       login() {
-        console.log('logging in');
         this.axios.post(`${this.$baseUrl}/users/login`, {
           username: this.username,
           email: this.email,
@@ -101,7 +100,6 @@
         })
           .then((response) => {
             this.$cookies.set('token', response.data.token);
-            console.log(this.$cookies.get('token'));
             this.$router.push({ name: 'venues'});
           })
           .catch((response) => {

@@ -42,27 +42,28 @@
 
         const baseUrl = this.$baseUrl;
         const venueId = this.$route.params.venueId;
-        console.log(baseUrl, venueId);
 
-
-        this.axios({
-          method: 'post',
-          url: `${baseUrl}/venues/${venueId}/photos`,
-          data: bodyFormData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'X-Authorization': this.$cookies.get('token')
-          }
-
-        })
-          .then((response) => {
-            console.log(response)
-            console.log(response);
+        if (this.file !== null) {
+          return this.axios({
+            method: 'post',
+            url: `${baseUrl}/venues/${venueId}/photos`,
+            data: bodyFormData,
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'X-Authorization': this.$cookies.get('token')
+            }
           })
-          .catch((response) => {
-            //handle error
-            console.log(response);
-          });
+
+            .then(() => {
+              this.$emit('upload');
+              this.showModal = false;
+              this.file = null;
+            })
+            .catch((response) => {
+              //handle error
+              console.log(response);
+            });
+        }
 
       }
     }

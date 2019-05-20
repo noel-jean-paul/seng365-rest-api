@@ -42,7 +42,7 @@
 
         </v-card>
 
-        <PhotoUpload class="mt-2"/>
+        <PhotoUpload class="mt-2" @upload="$emit('upload')"/>
 
       </v-flex>
     </v-layout>
@@ -67,6 +67,13 @@
 
     components: {
       PhotoUpload
+    },
+
+    methods: {
+      go() {
+        console.log("emitting");
+        this.$emit('upload');
+      }
     }
   }
 </script>

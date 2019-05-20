@@ -120,15 +120,12 @@
         this.duplicateEmail = false;
 
         if (this.submissionValid()) {
-          console.log('form submitted');
           this.createUser()
             .then((response) => {
-              console.log('user created', response);
 
               // Set cookie
               const userId = response.data.userId.toString();
               this.$cookies.set('token', response.data.token);
-              console.log(this.$cookies.get('token'));
 
               this.$router.push({ name: 'venues'});
             })
@@ -138,8 +135,6 @@
               console.log('400: duplicate email or username');
               this.duplicateEmail = true;
             });
-        } else {
-          console.log('errors');
         }
       },
 
@@ -153,7 +148,6 @@
           this.confirmPasswordState
         ];
 
-        console.log(validationResults);
         for (const result of validationResults) {
           if (!result) {
             return false;
