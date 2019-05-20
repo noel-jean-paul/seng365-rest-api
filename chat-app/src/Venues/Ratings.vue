@@ -27,6 +27,7 @@
                      class="pt-3"
                      :star-size="30"
                      active-color="orange"
+                     :max-rating="4"
         >
         </star-rating>
       </b-col>

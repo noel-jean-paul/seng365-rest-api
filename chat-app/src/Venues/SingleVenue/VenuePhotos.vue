@@ -1,5 +1,5 @@
 <template>
-  <div id="venuePhotos">
+  <div id="venuePhotos" v-if="venue">
     <div v-if="venue.photos.length > 0">
 
     <v-layout>
@@ -37,9 +37,13 @@
                 </v-card>
               </v-flex>
             </v-layout>
+
           </v-container>
 
         </v-card>
+
+        <PhotoUpload class="mt-2"/>
+
       </v-flex>
     </v-layout>
 
@@ -52,11 +56,17 @@
 </template>
 
 <script>
+  import PhotoUpload from './PhotoUpload';
+
   export default {
     name: "VenuePhotos",
 
     props: {
       venue: Object
+    },
+
+    components: {
+      PhotoUpload
     }
   }
 </script>

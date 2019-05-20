@@ -21,6 +21,8 @@
             </b-form-group>
           </div>
 
+          <CreateVenue/>
+
         </b-col>
 
         <b-col cols="10">
@@ -36,12 +38,14 @@
 
 <script>
   import VenueCard from './VenueCard';
+  import CreateVenue from './CreateVenue';
 
   export default {
     name: "Venues",
 
     components: {
-      VenueCard
+      VenueCard,
+      CreateVenue
     },
 
     data() {

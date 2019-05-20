@@ -1,5 +1,5 @@
 <template>
-  <b-card>
+  <b-card id="venue-details">
 
     <b-card-body>
       <b-card-title>{{ venue.venueName }}</b-card-title>

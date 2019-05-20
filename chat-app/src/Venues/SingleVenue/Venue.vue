@@ -1,5 +1,5 @@
 <template>
-  <div id='venue' v-if="venue != null">
+  <div id='venue' v-if="venue">
 
     <div v-if="errorFlag" style="color: red;">
       {{ error }}
@@ -13,7 +13,6 @@
 
         <b-col cols="6">
           <VenuePhotos :venue="venue" class="mt-4"/>
-          <PhotoUpload/>
         </b-col>
       </b-row>
     </b-container>
@@ -25,15 +24,13 @@
 <script>
   import VenueDetails from './VenueDetails';
   import VenuePhotos from './VenuePhotos';
-  import PhotoUpload from './PhotoUpload';
 
   export default {
     name: "Venue",
 
     components: {
       VenueDetails,
-      VenuePhotos,
-      PhotoUpload
+      VenuePhotos
     },
 
     data() {
