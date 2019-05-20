@@ -21,7 +21,7 @@
               photo.photoFilename"
                     :alt="photo.photoDescription"
                     aspect-ratio="1"
-                    class="grey lighten-2"
+                    :class="{'border border-primary': photo.isPrimary}"
                   >
                     <template v-slot:placeholder>
                       <v-layout
