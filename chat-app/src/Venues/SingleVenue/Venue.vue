@@ -50,6 +50,7 @@
 
     methods: {
       getVenueData() {
+        console.log("getting venue");
         return Promise.all([
           this.getAllVenues(),
           this.getVenue()
@@ -61,13 +62,15 @@
             for (const venue of venues) {
               const id = venue.venueId;
               const routeId = this.$route.params.venueId;
-              if (id === routeId) {
-                console.log('in the if');
+              //console.log(typeof id, typeof routeId);
+              if (id == routeId) {  // venueId is a string if you reload but num in you come from another page
+                //console.log('in the if');
                 singleVenue = { ...venue, ...singleVenue};
                 break;
               }
             }
 
+            console.log("returning");
             return singleVenue;
           });
       },
