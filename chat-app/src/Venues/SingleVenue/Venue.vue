@@ -13,6 +13,7 @@
 
         <b-col cols="6">
           <VenuePhotos :venue="venue" class="mt-4"/>
+          <PhotoUpload/>
         </b-col>
       </b-row>
     </b-container>
@@ -24,13 +25,15 @@
 <script>
   import VenueDetails from './VenueDetails';
   import VenuePhotos from './VenuePhotos';
+  import PhotoUpload from './PhotoUpload';
 
   export default {
     name: "Venue",
 
     components: {
       VenueDetails,
-      VenuePhotos
+      VenuePhotos,
+      PhotoUpload
     },
 
     data() {
@@ -60,10 +63,10 @@
             let singleVenue = result[1];
 
             for (const venue of venues) {
-              const id = venue.venueId;
+              const id = venue.venueId.toString();
               const routeId = this.$route.params.venueId;
-              //console.log(typeof id, typeof routeId);
-              if (id == routeId) {  // venueId is a string if you reload but num in you come from another page
+              console.log(typeof id, typeof routeId);
+              if (id === routeId) {  // venueId is a string if you reload but num in you come from another page
                 //console.log('in the if');
                 singleVenue = { ...venue, ...singleVenue};
                 break;

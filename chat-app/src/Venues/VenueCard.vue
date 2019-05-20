@@ -55,7 +55,7 @@
       },
 
       onDetailsClick: function() {
-        this.$router.push({ name: 'venue', params: { venueId: this.venue.venueId } });
+        this.$router.push({ name: 'venue', params: { venueId: this.venue.venueId.toString() } });
       }
     }
   }
