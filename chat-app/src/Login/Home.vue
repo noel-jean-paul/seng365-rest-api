@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container>
+    <b-container style="max-width: 540px">
       <b-card
         title="Log in"
       >

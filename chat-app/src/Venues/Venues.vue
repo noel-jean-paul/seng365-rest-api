@@ -28,7 +28,7 @@
             </b-form-checkbox>
           </div>
 
-          <CreateVenue class="mt-4"/>
+          <CreateVenue class="mt-4" v-if="$cookies.isKey('token')"/>
 
         </b-col>
 
