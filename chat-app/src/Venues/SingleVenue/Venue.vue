@@ -12,7 +12,7 @@
         </b-col>
 
         <b-col cols="6">
-          <VenuePhotos :venue="venue" class="mt-4" @upload="refreshData"/>
+          <VenuePhotos :venue="venue" class="mt-4" @reload-required="refreshData"/>
         </b-col>
       </b-row>
     </b-container>

@@ -16,7 +16,7 @@
                   d-flex
                 >
                   <v-card flat tile class="d-flex">
-                    <div style="cursor: pointer" @click="() => onPhotoClick(photo)">
+                    <div style="cursor: pointer" @click="onPhotoClick(photo)">
                       <v-img
                         :src="$baseUrl + '/venues/' + venue.venueId + '/photos/' +
               photo.photoFilename"
@@ -38,15 +38,6 @@
                     </div>
                   </v-card>
 
-                  <b-modal v-model="showPhotoModal">
-                    <b-container>
-                      <v-img :src="$baseUrl + '/venues/' + venue.venueId + '/photos/' +
-              photo.photoFilename"
-                             :alt="photo.photoDescription"/>
-
-                    </b-container>
-                  </b-modal>
-
                 </v-flex>
               </v-layout>
 
@@ -54,7 +45,7 @@
 
           </v-card>
 
-          <PhotoUpload class="mt-2" @upload="$emit('upload')" :hasPhotos="venue.photos.length > 0"/>
+          <PhotoUpload class="mt-2" @upload="$emit('reload-required')" :hasPhotos="venue.photos.length > 0"/>
 
         </v-flex>
       </v-layout>
@@ -62,8 +53,27 @@
     </div>
     <div v-else>
       <h3> This venue has no photos </h3>
-      <PhotoUpload class="mt-2" @upload="$emit('upload')" :hasPhotos="venue.photos.length > 0"/>
+      <PhotoUpload class="mt-2" @upload="$emit('reload-required')" :hasPhotos="venue.photos.length > 0"/>
     </div>
+
+    <b-modal v-model="showPhotoModal" v-if="showPhotoModal">
+      <b-container>
+        <v-img :src="$baseUrl + '/venues/' + venue.venueId + '/photos/' +
+              modalPhoto.photoFilename"
+               :alt="modalPhoto.photoDescription"/>
+
+      </b-container>
+
+      <div slot="modal-footer">
+        <b-button variant="primary"
+                  @click="makePrimary"
+                  :disabled="modalPhoto.isPrimary"
+        > Make primary </b-button>
+        <b-button variant="danger"
+                  @click="deletePhoto"
+        > Delete </b-button>
+      </div>
+    </b-modal>
 
   </div>
 
@@ -78,7 +88,8 @@
 
     data() {
       return {
-        showPhotoModal: false
+        showPhotoModal: false,
+        modalPhoto: null
       }
     },
 
@@ -92,8 +103,61 @@
 
     methods: {
       onPhotoClick(photo) {
-        console.log('clicky click click');
         this.showPhotoModal = true;
+        this.modalPhoto = photo;
+      },
+
+      makePrimary() {
+        const url = `${this.$baseUrl}/venues/${this.venue.venueId}/photos/` +
+          `${this.modalPhoto.photoFilename}/setPrimary`;
+
+        this.axios({
+          method:'post',
+          url: url,
+          headers: {
+            'X-Authorization': this.$cookies.get('token')
+          }
+        })
+          .then(() => {
+            // Reload data from venues
+            this.$emit('reload-required');
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+      },
+
+      deletePhoto() {
+        this.$bvModal.msgBoxConfirm('Delete photo?', {
+          size: 'md',
+          buttonSize: 'md',
+          okVariant: 'danger',
+          okTitle: 'Delete',
+          cancelTitle: 'Cancel',
+          footerClass: 'p-2',
+          hideHeaderClose: false,
+          centered: true
+        })
+          .then(value => {
+            if (value) {
+              const url = `${this.$baseUrl}/venues/${this.venue.venueId}/photos/` +
+                `${this.modalPhoto.photoFilename}`;
+
+              return this.axios({
+                method: 'delete',
+                url: url,
+                headers: {
+                  'X-Authorization': this.$cookies.get('token')
+                }
+              })
+                .then(() => {
+                  this.$emit('reload-required');
+                  this.showPhotoModal = false;
+                  this.modalPhoto = null;
+                })
+            }
+          })
+
       }
     }
   }
