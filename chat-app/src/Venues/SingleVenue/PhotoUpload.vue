@@ -23,7 +23,15 @@
 
 
 
-        <b-button class="mt-2" variant="primary" @click="upload"> Upload </b-button>
+        <b-button class="mt-2"
+                  variant="primary"
+                  @click="upload"
+                  :disabled="file ? file.size > 20 * mbToByteFactor : false"
+        > Upload </b-button>
+
+        <div class="text-danger" v-if="file ? file.size > 20 * mbToByteFactor : false">
+          File is more than 20mb big
+        </div>
 
       </b-container>
     </b-modal>
@@ -40,7 +48,8 @@
       return {
         showModal: false,
         file: null,
-        makePrimary: false
+        makePrimary: false,
+        mbToByteFactor: 1000000
       }
     },
 
@@ -50,6 +59,8 @@
 
     methods: {
       upload() {
+        console.log('file size: ', this.file);
+
         const bodyFormData = new FormData();
         bodyFormData.set('description', '');
         bodyFormData.set('makePrimary', this.makePrimary);
