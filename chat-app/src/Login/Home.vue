@@ -64,6 +64,7 @@
 
 <script>
   import RegisterForm from "./RegisterForm";
+  import authUtils from '../utils/authUtils';
 
   export default {
     name: "Home",
@@ -99,7 +100,7 @@
           password: this.password
         })
           .then((response) => {
-            this.$cookies.set('token', response.data.token);
+            authUtils.setCookie(this, response.data.userId, response.data.token);
             this.$router.push({ name: 'venues'});
           })
           .catch((response) => {

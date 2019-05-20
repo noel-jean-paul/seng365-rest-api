@@ -100,6 +100,8 @@
 </template>
 
 <script>
+  import authUtils from '../utils/authUtils'
+
   export default {
     name: "RegisterForm",
 
@@ -124,8 +126,7 @@
             .then((response) => {
 
               // Set cookie
-              const userId = response.data.userId.toString();
-              this.$cookies.set('token', response.data.token);
+              authUtils.setCookie(this, response.data.userId, response.data.token);
 
               this.$router.push({ name: 'venues'});
             })

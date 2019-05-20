@@ -45,7 +45,11 @@
 
           </v-card>
 
-          <PhotoUpload class="mt-2" @upload="$emit('reload-required')" :hasPhotos="venue.photos.length > 0"/>
+          <PhotoUpload v-if="isAdmin"
+                       class="mt-2"
+                       @upload="$emit('reload-required')"
+                       :hasPhotos="venue.photos.length > 0"
+          />
 
         </v-flex>
       </v-layout>
@@ -53,7 +57,11 @@
     </div>
     <div v-else>
       <h3> This venue has no photos </h3>
-      <PhotoUpload class="mt-2" @upload="$emit('reload-required')" :hasPhotos="venue.photos.length > 0"/>
+      <PhotoUpload v-if="isAdmin"
+                   class="mt-2"
+                   @upload="$emit('reload-required')"
+                   :hasPhotos="venue.photos.length > 0"
+      />
     </div>
 
     <b-modal v-model="showPhotoModal" v-if="showPhotoModal">
@@ -82,6 +90,7 @@
 
 <script>
   import PhotoUpload from './PhotoUpload';
+  import authUtils from '../../utils/authUtils.js';
 
   export default {
     name: "VenuePhotos",
@@ -89,7 +98,8 @@
     data() {
       return {
         showPhotoModal: false,
-        modalPhoto: null
+        modalPhoto: null,
+        isAdmin: authUtils.isAuthenticated(this, this.venue.admin.userId)
       }
     },
 
@@ -115,7 +125,7 @@
           method:'post',
           url: url,
           headers: {
-            'X-Authorization': this.$cookies.get('token')
+            'X-Authorization': authUtils.getCookie(this)
           }
         })
           .then(() => {
@@ -147,7 +157,7 @@
                 method: 'delete',
                 url: url,
                 headers: {
-                  'X-Authorization': this.$cookies.get('token')
+                  'X-Authorization': authUtils.getCookie(this)
                 }
               })
                 .then(() => {

@@ -31,6 +31,8 @@
 </template>
 
 <script>
+  import authUtils from '../../utils/authUtils';
+
   export default {
     name: "PhotoUpload",
 
@@ -63,7 +65,7 @@
             data: bodyFormData,
             headers: {
               'Content-Type': 'multipart/form-data',
-              'X-Authorization': this.$cookies.get('token')
+              'X-Authorization': authUtils.getCookie(this)
             }
           })
 
