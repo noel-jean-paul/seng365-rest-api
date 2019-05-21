@@ -326,7 +326,7 @@
             .then(() => {
               this.selectedDir = value;
               this.getVenueData(this.selectedCity);
-            })
+            });
         } else {
           this.selectedDir = value;
           this.getVenueData(this.selectedCity);
@@ -345,13 +345,19 @@
 
       getLocation() {
         console.log('nav', navigator);
-        return navigator.geolocation.getCurrentPosition(this.setPosition)
+        return new Promise(resolve => {
+          navigator.geolocation.getCurrentPosition((position) =>
+            this.setPosition(position, resolve));
+        }, reject => {
+
+        });
       },
 
-      setPosition(position) {
+      setPosition(position, resolve) {
         console.log(position.coords);
         this.myLatitude = position.coords.latitude;
         this.myLongitude = position.coords.longitude;
+        resolve();
 
         console.log(this.myLatitude, this.myLongitude);
       }
