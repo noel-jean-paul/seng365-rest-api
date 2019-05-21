@@ -5,11 +5,14 @@
         no-body
         style="max-width: 540px"
       >
-        <b-card-img :src="`${$baseUrl}/users/${$route.params.userId}/photo?x=${photoQuery}`"
-                    alt="Profile Picture"
-        >
+        <div v-if="hasPhoto">
+        <b-card-img
 
+            :src="`${$baseUrl}/users/${$route.params.userId}/photo?x=${photoQuery}`"
+            alt="Profile Picture"
+        >
         </b-card-img>
+        </div>
 
         <b-card-body>
           <b-card-title>{{ user.username }}</b-card-title>
@@ -30,6 +33,13 @@
           </b-button>
 
           <b-button @click="showUploadModal = !showUploadModal">Upload Profile Picture</b-button>
+
+          <b-button @click="onDeletePhoto"
+                    variant="danger"
+                    v-if="hasPhoto"
+          >
+            Delete profile photo
+          </b-button>
         </b-card-footer>
       </b-card>
 
@@ -76,7 +86,8 @@
         isAdmin: false,
         showEditModal: false,
         showUploadModal: false,
-        photoQuery: true
+        photoQuery: true,
+        hasPhoto: false
       }
     },
 
@@ -84,14 +95,69 @@
       if (parseInt(this.$route.params.userId) === authUtils.getAuthedUserId(this)) {
         this.isAdmin = true;
       }
-      this.getUser();
+      Promise.all([
+      this.getUser(),
+      this.checkForPhoto()
+    ])
+        .then((result) => {
+          this.hasPhoto = result[1]
+        });
     },
 
     methods: {
+      checkForPhoto() {
+        return this.axios.get(`${this.$baseUrl}/users/${this.$route.params.userId}/photo`)
+          .then((result) => {
+            return true
+          })
+          .catch((error) => {
+            // no photo exists
+            return false
+        });
+      },
+
+      onDeletePhoto() {
+        this.$bvModal.msgBoxConfirm('Delete photo?', {
+          size: 'md',
+          buttonSize: 'md',
+          okVariant: 'danger',
+          okTitle: 'Delete',
+          cancelTitle: 'Cancel',
+          footerClass: 'p-2',
+          hideHeaderClose: false,
+          centered: true
+        })
+          .then((value) => {
+            if (value) {
+              const url = `${this.$baseUrl}/users/${this.$route.params.userId}/photo`;
+
+              return this.axios({
+                method: 'delete',
+                url: url,
+                headers: {
+                  'X-Authorization': authUtils.getCookie(this)
+                }
+              })
+                .then(() => {
+                  this.checkForPhoto()
+                    .then((result) => {
+                      this.hasPhoto = result;
+                    this.photoQuery = !this.photoQuery;
+                    })
+                })
+            }
+          })
+      },
+
       onUpload() {
         console.log('onUpload');
         this.showUploadModal = false;
-        this.photoQuery = !this.photoQuery;
+        this.checkForPhoto()
+          .then((result) => {
+            this.hasPhoto = result;
+            this.photoQuery = !this.photoQuery;
+
+          })
       },
 
       onSave() {
