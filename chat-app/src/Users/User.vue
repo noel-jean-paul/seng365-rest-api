@@ -34,7 +34,7 @@
              title="Edit Profile"
              hide-footer
     >
-      <EditProfile @close-reload="getUser"
+      <EditProfile @close-reload="onSave"
                    :user="user"
                     :userId="$route.params.userId"
       />
@@ -76,6 +76,11 @@
     },
 
     methods: {
+      onSave() {
+        this.showEditModal = false;
+        this.getUser();
+      },
+
       getUser() {
         this.axios({
           method: 'get',
