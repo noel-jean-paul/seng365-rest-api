@@ -157,9 +157,23 @@
             reverse: false,
             sortBy: 'COST_RATING',
             title: 'CostRating: Lowest to Highest'
-          }
+          },
+          {
+            value: 'distClose',
+            reverse: false,
+            sortBy: 'DISTANCE',
+            title: 'Distance: Closest to furthest',
+          },
+          {
+            value: 'distFar',
+            reverse: true,
+            sortBy: 'DISTANCE',
+            title: 'Distance: Furthest to closest',
+          },
         ],
         selectedDir: null,
+        myLatitude: null,
+        myLongitude: null,
 
         minStarRating: 1,
         maxCostRating: 4
@@ -232,6 +246,11 @@
         const option = this.dirOptions.find((option) => { return option.value === this.selectedDir });
         params += `sortBy=${option.sortBy}&reverseSort=${option.reverse}&`;
 
+        // distance
+        if (option.sortBy === 'DISTANCE') {
+          console.log(this.myLatitude, this.myLongitude);
+          params += `myLatitude=${this.myLatitude}&myLongitude=${this.myLongitude}&`;
+        }
 
         // min star rating
         params += `minStarRating=${this.minStarRating}&`;
@@ -302,8 +321,16 @@
       },
 
       onSortByChange(value) {
-        this.selectedDir = value;
-        this.getVenueData(this.selectedCity);
+        if (value === 'distClose' || value === 'distFar') {
+          this.getLocation()
+            .then(() => {
+              this.selectedDir = value;
+              this.getVenueData(this.selectedCity);
+            })
+        } else {
+          this.selectedDir = value;
+          this.getVenueData(this.selectedCity);
+        }
       },
 
       onMinStarRatingChange(rating) {
@@ -314,6 +341,19 @@
       onMaxCostRatingChange(rating) {
         this.maxCostRating = rating;
         this.getVenueData(this.selectedCity);
+      },
+
+      getLocation() {
+        console.log('nav', navigator);
+        return navigator.geolocation.getCurrentPosition(this.setPosition)
+      },
+
+      setPosition(position) {
+        console.log(position.coords);
+        this.myLatitude = position.coords.latitude;
+        this.myLongitude = position.coords.longitude;
+
+        console.log(this.myLatitude, this.myLongitude);
       }
     }
   }
