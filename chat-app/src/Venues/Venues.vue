@@ -64,15 +64,26 @@
               </b-form-radio>
             </b-form-group>
 
-            <b-form-group label="Min Star Rating" label-class="font-weight-bold">
+            <b-form-group :label="`Min Star Rating: ${minStarRating}`"  label-class="font-weight-bold">
               <b-form-input v-model="minStarRating"
                             v-on:change="onMinStarRatingChange"
                             min=1
                             max=5
                             type="range"
               ></b-form-input>
-              <div class="mt-2 font-weight-bolder">Star Rating: {{ minStarRating }}</div>
               <div >0 = poor quality, 5 = amazing</div>
+            </b-form-group>
+
+            <b-form-group class="mt-4" :label="`Max Cost Rating: ${maxCostRating}`"
+                          label-class="font-weight-bold">
+
+              <b-form-input v-model="maxCostRating"
+                            v-on:change="onMaxCostRatingChange"
+                            min=0
+                            max=4
+                            type="range"
+              ></b-form-input>
+              <div >0 = free, 4 = expensive</div>
             </b-form-group>
 
           </div>
@@ -225,6 +236,9 @@
         // min star rating
         params += `minStarRating=${this.minStarRating}&`;
 
+        // max cost rating
+        params += `maxCostRating=${this.maxCostRating}&`;
+
 
         return this.axios.get(`${this.$baseUrl}/venues${params}`)
           .then((res) => {
@@ -294,6 +308,11 @@
 
       onMinStarRatingChange(rating) {
         this.minStarRating = rating;
+        this.getVenueData(this.selectedCity);
+      },
+
+      onMaxCostRatingChange(rating) {
+        this.maxCostRating = rating;
         this.getVenueData(this.selectedCity);
       }
     }
