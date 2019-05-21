@@ -39,6 +39,15 @@
       />
     </b-modal>
 
+    <b-modal v-model="showReviewModal"
+             title="Add Review"
+             hide-footer
+    >
+      <CreateReview @close-reload="onReviewEdited"
+                   :venueId="$route.params.venueId"
+      />
+    </b-modal>
+
   </div>
 
 </template>
@@ -48,6 +57,7 @@
   import VenuePhotos from './VenuePhotos';
   import authUtils from '../../utils/authUtils';
   import CreateVenue from '../CreateVenue';
+  import CreateReview from './CreateReview';
 
   export default {
     name: "Venue",
@@ -55,7 +65,8 @@
     components: {
       VenueDetails,
       VenuePhotos,
-      CreateVenue
+      CreateVenue,
+      CreateReview
     },
 
     data() {
@@ -76,6 +87,11 @@
     },
 
     methods: {
+      onReviewEdited() {
+        this.showReviewModal = false;
+        this.refreshData();
+      },
+
       onVenueEdited() {
         this.showEditModal = false;
         this.refreshData();
