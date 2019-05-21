@@ -5,28 +5,30 @@
       {{ error }}
     </div>
 
-    <b-container>
-      <b-row>
-        <b-col cols="6">
-          <VenueDetails :venue="venue" class="mt-4"/>
-          <b-button class="mt-4"
-                    variant="primary"
-                    @click="showEditModal = !showEditModal"
-                    v-if="isAdmin"
-          > Edit Venue </b-button>
+    <b-row>
+      <b-col class="ml-4" cols="4">
+        <VenueDetails :venue="venue" class="mt-4"/>
+        <b-button class="mt-4"
+                  variant="primary"
+                  @click="showEditModal = !showEditModal"
+                  v-if="isAdmin"
+        > Edit Venue </b-button>
 
-          <b-button class="mt-4"
-                    variant="secondary"
-                    @click="showReviewModal = !showReviewModal"
-                    v-if="reviewable"
-          > Add Review </b-button>
-        </b-col>
+        <b-button class="mt-4"
+                  variant="secondary"
+                  @click="showReviewModal = !showReviewModal"
+                  v-if="reviewable"
+        > Add Review </b-button>
+      </b-col>
 
-        <b-col cols="6">
-          <VenuePhotos :venue="venue" :isAdmin=isAdmin class="mt-4" @reload-required="refreshData"/>
-        </b-col>
-      </b-row>
-    </b-container>
+      <b-col cols="4">
+        <VenuePhotos :venue="venue" :isAdmin=isAdmin class="mt-4" @reload-required="refreshData"/>
+      </b-col>
+
+      <b-col cols="3">
+        <Reviews :venueId="$route.params.venueId"/>
+      </b-col>
+    </b-row>
 
     <b-modal v-model="showEditModal"
              title="Edit Venue"
@@ -44,7 +46,7 @@
              hide-footer
     >
       <CreateReview @close-reload="onReviewEdited"
-                   :venueId="$route.params.venueId"
+                    :venueId="$route.params.venueId"
       />
     </b-modal>
 
@@ -58,6 +60,7 @@
   import authUtils from '../../utils/authUtils';
   import CreateVenue from '../CreateVenue';
   import CreateReview from './CreateReview';
+  import Reviews from './Reviews';
 
   export default {
     name: "Venue",
@@ -66,7 +69,8 @@
       VenueDetails,
       VenuePhotos,
       CreateVenue,
-      CreateReview
+      CreateReview,
+      Reviews
     },
 
     data() {
