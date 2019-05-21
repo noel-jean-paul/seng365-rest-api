@@ -16,20 +16,12 @@
       </b-col>
     </b-row>
 
-    <b-row>
+    <b-row class="mt-4">
       <b-col class="center-vert text-right" xs="2">
         Cost:
       </b-col>
       <b-col class="float-left" xs="10">
-        <star-rating v-model="venue.modeCostRating"
-                     read-only
-                     :increment="0.01"
-                     class="pt-3"
-                     :star-size="30"
-                     active-color="orange"
-                     :max-rating="4"
-        >
-        </star-rating>
+        <h3> {{ '$'.repeat(venue.modeCostRating) || 'Free'}} </h3>
       </b-col>
     </b-row>
   </b-container>

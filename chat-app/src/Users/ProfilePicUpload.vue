@@ -42,7 +42,6 @@
         const userId = this.$route.params.userId;
 
         if (this.file !== null) {
-          console.log('file', this.file);
           const fileType = this.file.type;
 
           return this.axios({

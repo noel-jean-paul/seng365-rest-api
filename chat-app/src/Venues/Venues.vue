@@ -174,8 +174,6 @@
 
     computed: {
       dirOptions() {
-        console.log('computing dir options', this.displayDirOptions);
-
         const dirOptions = [
           { value: 'starHigh',
             reverse: false,
@@ -200,7 +198,6 @@
         ];
 
         if (this.displayDirOptions) {
-          console.log('returning full options');
           return dirOptions.concat([
             {
               value: 'distClose',
@@ -259,6 +256,10 @@
                 venue.meanStarRating = 3;
               }
 
+              if (venue.modeCostRating === null) {
+                venue.modeCostRating = 0;
+              }
+
               for (const category of categories) {
                 if (venue.categoryId === category.categoryId) {
                   venue.categoryName = category.categoryName;
@@ -294,7 +295,6 @@
 
         // distance
         if (option.sortBy === 'DISTANCE') {
-          console.log(this.myLatitude, this.myLongitude);
           params += `myLatitude=${this.myLatitude}&myLongitude=${this.myLongitude}&`;
         }
 

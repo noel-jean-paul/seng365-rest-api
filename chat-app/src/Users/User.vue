@@ -150,7 +150,6 @@
       },
 
       onUpload() {
-        console.log('onUpload');
         this.showUploadModal = false;
         this.checkForPhoto()
           .then((result) => {
