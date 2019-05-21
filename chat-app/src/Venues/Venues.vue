@@ -154,15 +154,15 @@
         }
 
         if (this.adminOnly) {
-          params += `adminId=${authUtils.getAuthedUserId(this)}`;
+          params += `adminId=${authUtils.getAuthedUserId(this)}&`;
         }
 
         if (this.selectedCategory !== 'all') {
-          params += `categoryId=${this.selectedCategory}`;
+          params += `categoryId=${this.selectedCategory}&`;
         }
 
         if (this.searchString !== '') {
-          params += `q=${this.searchString}`;
+          params += `q=${this.searchString}&`;
         }
 
         return this.axios.get(`${this.$baseUrl}/venues${params}`)
