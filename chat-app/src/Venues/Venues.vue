@@ -1,9 +1,5 @@
 <template>
   <div>
-    <div v-if="errorFlag" style="color: red;">
-      {{ error }}
-    </div>
-
     <b-container>
       <b-row>
         <b-col cols="3">
@@ -77,7 +73,7 @@
                             max=5
                             type="range"
               ></b-form-input>
-              <div >0 = poor quality, 5 = amazing</div>
+              <div >0 = Poor quality, 5 = Amazing</div>
             </b-form-group>
 
             <b-form-group class="mt-4" :label="`Max Cost Rating: ${maxCostRating}`"
@@ -89,7 +85,7 @@
                             max=4
                             type="range"
               ></b-form-input>
-              <div >0 = free, 4 = expensive</div>
+              <div >0 = Free, 4 = Expensive</div>
             </b-form-group>
 
           </div>
@@ -178,22 +174,22 @@
           { value: 'starHigh',
             reverse: false,
             sortBy: 'STAR_RATING',
-            title: 'StarRating: Highest to Lowest'
+            title: 'Star Rating: Highest to Lowest'
           },
           { value: 'starLow',
             reverse: true,
             sortBy: 'STAR_RATING',
-            title: 'StarRating: Lowest to Highest'
+            title: 'Star Rating: Lowest to Highest'
           },
           { value: 'costLow',
             reverse: true,
             sortBy: 'COST_RATING',
-            title: 'CostRating: Highest to Lowest'
+            title: 'Cost Rating: Highest to Lowest'
           },
           { value: 'costHigh',
             reverse: false,
             sortBy: 'COST_RATING',
-            title: 'CostRating: Lowest to Highest'
+            title: 'Cost Rating: Lowest to Highest'
           }
         ];
 

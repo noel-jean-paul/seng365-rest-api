@@ -1,5 +1,9 @@
 exports.getCookie = (vue) => {
-  return vue.$cookies.get('token').token;
+  if (vue.$cookies.isKey('token')) {
+    return vue.$cookies.get('token').token;
+  } else {
+    return null
+  }
 };
 
 exports.isAuthenticated = (vue, userId) => {
@@ -11,7 +15,12 @@ exports.isAuthenticated = (vue, userId) => {
 };
 
 exports.getAuthedUserId = (vue) => {
-  return vue.$cookies.get('token').userId;
+  console.log('vue is', vue);
+  if (vue.$cookies.isKey('token')) {
+    return vue.$cookies.get('token').userId;
+  } else {
+    return -1;
+  }
 };
 
 exports.setCookie = (vue, userId, token) => {
