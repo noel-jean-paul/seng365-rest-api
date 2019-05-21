@@ -20,6 +20,8 @@
                             placeholder="Enter venue name"
                             v-on:change="onSearchChange"
               ></b-form-input>
+
+              <b-button class="mt-2" variant="info" @click="onSearchClick"> Search </b-button>
             </b-form-group>
 
             <b-form-group label="City" label-class="font-weight-bold">
@@ -367,6 +369,10 @@
 
       onSearchChange(string) {
         this.searchString = string;
+        this.getVenueData(this.selectedCity);
+      },
+
+      onSearchClick() {
         this.getVenueData(this.selectedCity);
       },
 
