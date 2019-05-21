@@ -143,7 +143,10 @@
         this.formError = false;
         if (this.submissionValid()) {
 
-          const url = `${this.$baseUrl}/venues` + this.editMode ? `/${this.venueId}` : '';
+          let url = `${this.$baseUrl}/venues`;
+          console.log(url);
+          url += this.editMode ? `/${this.venueId}` : '';
+          console.log(url);
 
           const data = {
             venueName: this.name,
@@ -152,12 +155,12 @@
             shortDescription: this.sDesc,
             longDescription: this.lDesc,
             address: this.address,
-            latitude: parseInt(this.lat),
-            longitude: parseInt(this.long)
+            latitude: parseFloat(this.lat),
+            longitude: parseFloat(this.long)
           };
 
           this.axios({
-            method: this.editMode ? 'put' : 'post',
+            method: this.editMode ? 'patch' : 'post',
             url: url,
             data: data,
             headers: {

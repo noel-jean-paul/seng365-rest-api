@@ -30,15 +30,16 @@
 
           <b-button class="mt-4"
                     @click="showCreateModal = !showCreateModal"
-                    variant="primary">
+                    variant="primary"
+                    v-if="$cookies.isKey('token')"
+          >
             Add New Venue</b-button>
 
           <b-modal v-model="showCreateModal"
                    title="Create new venue"
                    hide-footer
           >
-            <CreateVenue v-if="$cookies.isKey('token')"
-                         @close-reload="onVenueCreated"
+            <CreateVenue @close-reload="onVenueCreated"
             />
           </b-modal>
 

@@ -12,6 +12,7 @@
           <b-button class="mt-4"
                     variant="primary"
                     @click="showEditModal = !showEditModal"
+                    v-if="isAdmin"
           > Edit Venue </b-button>
         </b-col>
 
@@ -25,8 +26,7 @@
              title="Edit Venue"
              hide-footer
     >
-      <CreateVenue v-if="$cookies.isKey('token')"
-                   @close-reload="onVenueEdited"
+      <CreateVenue @close-reload="onVenueEdited"
                    :venue="venue"
                    :editMode="true"
                    :venueId="$route.params.venueId"
