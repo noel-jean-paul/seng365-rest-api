@@ -66,7 +66,8 @@
         isAdmin: false,
         showEditModal: false,
         reviewable: false,
-        reviews: []
+        reviews: [],
+        showReviewModal: false
       }
     },
 
@@ -76,7 +77,7 @@
 
     methods: {
       onVenueEdited() {
-        this.showEditModal = true;
+        this.showEditModal = false;
         this.refreshData();
       },
 
