@@ -3,6 +3,7 @@ import App from './App.vue';
 import Home from './Login/Home.vue';
 import Venues from './Venues/Venues.vue';
 import Venue from './Venues/SingleVenue/Venue.vue';
+import User from './Users/User';
 
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
@@ -45,6 +46,11 @@ const routes = [
     path: '/venue/:venueId',
     name: 'venue',
     component: Venue
+  },
+  {
+    path: '/users/:userId',
+    name: 'user',
+    component: User
   }
 
 ];

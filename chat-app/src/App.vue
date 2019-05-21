@@ -23,6 +23,10 @@
               <template slot="button-content"><em>User</em></template>
 
               <b-dropdown-item v-if="$cookies.isKey('token')"
+                               @click="onProfileClick"
+              >Profile</b-dropdown-item>
+
+              <b-dropdown-item v-if="$cookies.isKey('token')"
                                @click="signOut"
               >Log Out</b-dropdown-item>
 
@@ -42,6 +46,8 @@
 </template>
 
 <script>
+  import authUtils from './utils/authUtils';
+
 export default {
   name: 'app',
 
@@ -53,6 +59,10 @@ export default {
     signOut() {
       this.$cookies.remove('token');
       this.$router.push({ name: 'home' });
+    },
+
+    onProfileClick() {
+      this.$router.push({ name: 'user', params: { userId: authUtils.getAuthedUserId(this) } });
     }
   }
 }
