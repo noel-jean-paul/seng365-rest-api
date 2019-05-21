@@ -1,6 +1,7 @@
 <template>
   <div>
-    <b-table stacked :items="tableReviews"></b-table>
+    <h3 class="mt-4" v-if="tableReviews.length === 0"> No reviews</h3>
+    <b-table v-else stacked :items="tableReviews"></b-table>
   </div>
 </template>
 
