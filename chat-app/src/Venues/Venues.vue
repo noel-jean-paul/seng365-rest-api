@@ -9,6 +9,13 @@
         <b-col cols="2">
 
           <div class="mt-4">
+            <b-form-group label="Venue Name">
+            <b-form-input v-model="searchString"
+                          placeholder="Enter venue name"
+                          v-on:change="onSearchChange"
+            ></b-form-input>
+            </b-form-group>
+
             <b-form-group label="City">
               <b-form-radio v-for="city of cities"
                             v-model="selectedCity"
@@ -93,7 +100,9 @@
         categories: [
           { categoryName: 'All', categpryId: 'all' }
         ],
-        showCreateModal: false
+        showCreateModal: false,
+
+        searchString: ''
       }
     },
 
@@ -147,7 +156,11 @@
         }
 
         if (this.selectedCategory !== 'all') {
-          params += `categoryId=${this.selectedCategory}`
+          params += `categoryId=${this.selectedCategory}`;
+        }
+
+        if (this.searchString !== '') {
+          params += `q=${this.searchString}`;
         }
 
         return this.axios.get(`${this.$baseUrl}/venues${params}`)
@@ -204,6 +217,11 @@
       onCategoryChange(selected) {
         this.selectedCategory = selected;
         this.getVenueData(this.selectedCity)
+      },
+
+      onSearchChange(string) {
+        this.searchString = string;
+        this.getVenueData(this.selectedCity);
       }
     }
   }
