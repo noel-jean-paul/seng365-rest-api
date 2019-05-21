@@ -7,7 +7,11 @@
     </b-card-body>
 
     <b-list-group flush>
-      <b-list-group-item><InfoRow title="Admin:"> {{ venue.admin.username }}</InfoRow></b-list-group-item>
+      <b-list-group-item><InfoRow title="Admin:">
+        <router-link :to="{ name: 'user', params: { userId: venue.admin.userId } }">
+          {{ venue.admin.username }}
+        </router-link></InfoRow>
+      </b-list-group-item>
       <b-list-group-item><InfoRow title="City:"> {{ venue.city }}</InfoRow></b-list-group-item>
       <b-list-group-item><InfoRow title="Adress:"> {{ venue.address }}</InfoRow></b-list-group-item>
       <b-list-group-item><InfoRow title="Added:"> {{ venue.dateAdded }}</InfoRow></b-list-group-item>

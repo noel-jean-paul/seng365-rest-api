@@ -182,7 +182,10 @@
             review: review.reviewBody,
             star_rating: review.starRating,
             cost_rating: review.costRating,
-            author: review.reviewAuthor.username,
+            author: {
+              username: review.reviewAuthor.username,
+              userId: review.reviewAuthor.userId
+            },
             time_posted: review.timePosted
           };
           rows.push(row);
