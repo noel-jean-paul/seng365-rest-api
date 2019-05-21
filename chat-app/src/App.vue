@@ -48,33 +48,35 @@
 <script>
   import authUtils from './utils/authUtils';
 
-export default {
-  name: 'app',
+  export default {
+    name: 'app',
 
-  methods: {
-    signIn() {
-      this.$router.push({ name: 'home' })
-    },
+    methods: {
+      signIn() {
+        this.$router.push({ name: 'home' })
+      },
 
-    signOut() {
-      this.$cookies.remove('token');
-      this.$router.push({ name: 'home' });
-    },
+      signOut() {
+        this.$cookies.remove('token');
+        setTimeout(() => {
+          this.$router.push({name: 'home'})
+        }, 10);
+      },
 
-    onProfileClick() {
-      this.$router.push({ name: 'user', params: { userId: authUtils.getAuthedUserId(this) } });
+      onProfileClick() {
+        this.$router.push({ name: 'user', params: { userId: authUtils.getAuthedUserId(this) } });
+      }
     }
   }
-}
 </script>
 
 <style>
-.custom-router-link {
-  color: inherit;
-}
+  .custom-router-link {
+    color: inherit;
+  }
 
-a:hover {
-  color: inherit;
-}
+  a:hover {
+    color: inherit;
+  }
 
 </style>
