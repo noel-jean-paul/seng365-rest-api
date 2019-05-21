@@ -16,6 +16,13 @@
             ></b-form-input>
           </b-form-group>
 
+          <b-form-group label="Category">
+            <b-form-select v-model="category"
+                           :options="catOptions"
+                           required
+            ></b-form-select>
+          </b-form-group>
+
           <b-form-group label="Short Description">
             <b-form-input v-model="sDesc"
                           trim
@@ -52,11 +59,11 @@
                         :invalid-feedback="invalidLatFeedback"
                         :state="latState"
           >
-          <b-form-input v-model="lat"
-                        trim
-                        placeholder="Latitude"
-                        required
-          ></b-form-input>
+            <b-form-input v-model="lat"
+                          trim
+                          placeholder="Latitude"
+                          required
+            ></b-form-input>
           </b-form-group>
 
           <b-form-group label="Longtidude"
@@ -87,6 +94,7 @@
         showModal: false,
         name: '',
         category: '',
+        catOptions: [],
         sDesc: '',
         lDesc: '',
         city: '',
@@ -94,6 +102,23 @@
         lat: '',
         long: ''
       }
+    },
+
+    props: {
+      categories: Array
+    },
+
+    mounted() {
+      console.log(this.categories);
+      for (const category of this.categories) {
+        const option = {
+          value: category.categoryId,
+          text: category.categoryName
+        };
+        this.catOptions.push(option);
+      }
+
+      console.log(this.catOptions);
     },
 
     methods: {

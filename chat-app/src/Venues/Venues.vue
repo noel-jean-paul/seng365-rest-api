@@ -28,7 +28,10 @@
             </b-form-checkbox>
           </div>
 
-          <CreateVenue class="mt-4" v-if="$cookies.isKey('token')"/>
+          <CreateVenue class="mt-4"
+                       v-if="$cookies.isKey('token')"
+                       :categories="categories"
+          />
 
         </b-col>
 
@@ -63,7 +66,8 @@
         venues: [],
         cities: ['All cities'],
         selectedCity: 'All cities',
-        adminOnly: false
+        adminOnly: false,
+        categories: []
       }
     },
 
@@ -120,6 +124,7 @@
       getCategories: function() {
         return this.axios.get(this.$baseUrl + '/categories')
           .then((res) => {
+            this.categories = res.data;
             return res.data;
           })
           .catch((error) => {
