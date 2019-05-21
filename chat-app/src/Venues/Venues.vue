@@ -147,7 +147,30 @@
 
         searchString: '',
 
-        dirOptions: [
+        displayDirOptions: true,
+        selectedDir: null,
+        myLatitude: null,
+        myLongitude: null,
+
+        minStarRating: 1,
+        maxCostRating: 4,
+
+        numVenues: null,
+        currentPage: 1,
+        perPage:10
+      }
+    },
+
+    mounted: function() {
+      this.selectedDir = this.dirOptions[0].value;
+      this.refreshData();
+    },
+
+    computed: {
+      dirOptions() {
+        console.log('computing dir options', this.displayDirOptions);
+
+        const dirOptions = [
           { value: 'starHigh',
             reverse: false,
             sortBy: 'STAR_RATING',
@@ -167,39 +190,33 @@
             reverse: false,
             sortBy: 'COST_RATING',
             title: 'CostRating: Lowest to Highest'
-          },
-          {
-            value: 'distClose',
-            reverse: false,
-            sortBy: 'DISTANCE',
-            title: 'Distance: Closest to furthest',
-          },
-          {
-            value: 'distFar',
-            reverse: true,
-            sortBy: 'DISTANCE',
-            title: 'Distance: Furthest to closest',
-          },
-        ],
-        selectedDir: null,
-        myLatitude: null,
-        myLongitude: null,
+          }
+        ];
 
-        minStarRating: 1,
-        maxCostRating: 4,
-
-        numVenues: null,
-        currentPage: 1,
-        perPage:10
+        if (this.displayDirOptions) {
+          console.log('returning full options');
+          return dirOptions.concat([
+            {
+              value: 'distClose',
+              reverse: false,
+              sortBy: 'DISTANCE',
+              title: 'Distance: Closest to furthest',
+            },
+            {
+              value: 'distFar',
+              reverse: true,
+              sortBy: 'DISTANCE',
+              title: 'Distance: Furthest to closest',
+            },
+          ]);
+        } else {
+          return dirOptions;
+        }
       }
     },
 
-    mounted: function() {
-      this.selectedDir = this.dirOptions[0].value;
-      this.refreshData();
-    },
-
     methods: {
+
       onPageChange(page) {
         this.currentPage = page;
         this.refreshData();
@@ -355,6 +372,9 @@
             .then(() => {
               this.selectedDir = value;
               this.getVenueData(this.selectedCity);
+            })
+            .catch(() => {
+              // getloaction access denied. Ignore
             });
         } else {
           this.selectedDir = value;
@@ -373,18 +393,25 @@
       },
 
       getLocation() {
-        return new Promise(resolve => {
-          navigator.geolocation.getCurrentPosition((position) =>
-            this.setPosition(position, resolve));
-        }, reject => {
-          console.log('rejected');
+        return new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            (position) => this.setPosition(position, resolve),
+            (error) => this.accessBlocked(error, reject));
         });
       },
 
       setPosition(position, resolve) {
-        this.myLatitude = position.coords.latitude;
-        this.myLongitude = position.coords.longitude;
-        resolve();
+          this.myLatitude = position.coords.latitude;
+          this.myLongitude = position.coords.longitude;
+          resolve();
+      },
+
+      accessBlocked(error, reject) {
+        console.log(error);
+        if (error.code === error.PERMISSION_DENIED) {
+          this.displayDirOptions = false;
+          reject();
+        }
       }
     }
   }
