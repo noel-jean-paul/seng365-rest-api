@@ -23,7 +23,7 @@
           <div >0 = poor quality, 5 = amazing</div>
         </b-form-group>
 
-        <b-form-group label="Star rating">
+        <b-form-group label="Cost rating">
           <b-form-input v-model="costRating"
                         type="range"
                         min=0
@@ -64,8 +64,8 @@
 
         const body = {
           reviewBody: this.reviewBody,
-          starRating: this.starRating,
-          costRating: this.costRating
+          starRating: parseInt(this.starRating),
+          costRating: parseInt(this.costRating)
         };
 
         this.axios({

@@ -26,7 +26,9 @@
       </b-col>
 
       <b-col cols="3">
-        <Reviews :venueId="$route.params.venueId"/>
+        <Reviews :venueId="$route.params.venueId"
+                 :tableReviews="tableReviews"
+        />
       </b-col>
     </b-row>
 
@@ -82,7 +84,8 @@
         showEditModal: false,
         reviewable: false,
         reviews: [],
-        showReviewModal: false
+        showReviewModal: false,
+        tableReviews: []
       }
     },
 
@@ -167,8 +170,24 @@
       getReviews() {
         return this.axios.get(`${this.$baseUrl}/venues/${this.$route.params.venueId}/reviews`)
           .then((res) => {
+            this.updateTableReviews(res.data);
             return res.data;
           })
+      },
+
+      updateTableReviews(reviews) {
+        let rows = [];
+        for (const review of reviews) {
+          const row = {
+            review: review.reviewBody,
+            star_rating: review.starRating,
+            cost_rating: review.costRating,
+            author: review.reviewAuthor.username,
+            time_posted: review.timePosted
+          };
+          rows.push(row);
+        }
+        this.tableReviews = rows;
       }
     }
   }

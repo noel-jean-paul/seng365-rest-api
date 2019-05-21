@@ -10,10 +10,10 @@
 
           <div class="mt-4">
             <b-form-group label="Venue Name" label-class="font-weight-bold">
-            <b-form-input v-model="searchString"
-                          placeholder="Enter venue name"
-                          v-on:change="onSearchChange"
-            ></b-form-input>
+              <b-form-input v-model="searchString"
+                            placeholder="Enter venue name"
+                            v-on:change="onSearchChange"
+              ></b-form-input>
             </b-form-group>
 
             <b-form-group label="City" label-class="font-weight-bold">
@@ -28,12 +28,12 @@
             </b-form-group>
 
             <b-form-group label="Admin" label-class="font-weight-bold">
-            <b-form-checkbox v-model="adminOnly"
-                             v-on:change="onAdminChange"
-                             v-if="$cookies.isKey('token')"
-            >
-              Show only my venues
-            </b-form-checkbox>
+              <b-form-checkbox v-model="adminOnly"
+                               v-on:change="onAdminChange"
+                               v-if="$cookies.isKey('token')"
+              >
+                Show only my venues
+              </b-form-checkbox>
             </b-form-group>
 
             <b-form-group label="Category" class="mt-2" label-class="font-weight-bold">
@@ -44,6 +44,17 @@
                             v-on:change="onCategoryChange"
               >
                 {{ category.categoryName }}
+              </b-form-radio>
+            </b-form-group>
+
+            <b-form-group label="Sort By" class="mt-2" label-class="font-weight-bold">
+              <b-form-radio v-for="direction of dirOptions"
+                            v-model="selectedDir"
+                            :value="direction.value"
+                            :key="direction.value"
+                            v-on:change="onSortByChange"
+              >
+                {{ direction.title }}
               </b-form-radio>
             </b-form-group>
 
@@ -60,8 +71,7 @@
                    title="Create new venue"
                    hide-footer
           >
-            <CreateVenue @close-reload="onVenueCreated"
-            />
+            <CreateVenue @close-reload="onVenueCreated"/>
           </b-modal>
 
         </b-col>
@@ -104,11 +114,37 @@
         ],
         showCreateModal: false,
 
-        searchString: ''
+        searchString: '',
+
+        dirOptions: [
+          { value: 'starHigh',
+            reverse: false,
+            sortBy: 'STAR_RATING',
+            title: 'StarRating: Highest to Lowest'
+          },
+          { value: 'starLow',
+            reverse: true,
+            sortBy: 'STAR_RATING',
+            title: 'StarRating: Lowest to Highest'
+          },
+          { value: 'costLow',
+            reverse: true,
+            sortBy: 'COST_RATING',
+            title: 'CostRating: Highest to Lowest'
+          },
+          { value: 'costHigh',
+            reverse: false,
+            sortBy: 'COST_RATING',
+            title: 'CostRating: Lowest to Highest'
+          }
+        ],
+
+        selectedDir: null
       }
     },
 
     mounted: function() {
+      this.selectedDir = this.dirOptions[0].value;
       this.refreshData();
     },
 
@@ -163,6 +199,11 @@
 
         if (this.searchString !== '') {
           params += `q=${this.searchString}&`;
+        }
+
+        if (this.selectedDir) {
+          const option = this.dirOptions.find((option) => { return option.value === this.selectedDir });
+          params += `sortBy=${option.sortBy}&reverseSort=${option.reverse}`;
         }
 
         return this.axios.get(`${this.$baseUrl}/venues${params}`)
@@ -223,6 +264,11 @@
 
       onSearchChange(string) {
         this.searchString = string;
+        this.getVenueData(this.selectedCity);
+      },
+
+      onSortByChange(value) {
+        this.selectedDir = value;
         this.getVenueData(this.selectedCity);
       }
     }
