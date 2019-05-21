@@ -6,9 +6,15 @@
 
     <b-container>
       <b-row>
-        <b-col cols="2">
+        <b-col cols="3">
+          <b-button class="mt-2" @click="showCreateModal = !showCreateModal"
+                    variant="primary"
+                    v-if="$cookies.isKey('token')"
+          >
+            Add New Venue</b-button>
 
           <div class="mt-4">
+
             <b-form-group label="Venue Name" label-class="font-weight-bold">
               <b-form-input v-model="searchString"
                             placeholder="Enter venue name"
@@ -58,14 +64,18 @@
               </b-form-radio>
             </b-form-group>
 
-          </div>
+            <b-form-group label="Min Star Rating" label-class="font-weight-bold">
+              <b-form-input v-model="minStarRating"
+                            v-on:change="onMinStarRatingChange"
+                            min=1
+                            max=5
+                            type="range"
+              ></b-form-input>
+              <div class="mt-2 font-weight-bolder">Star Rating: {{ minStarRating }}</div>
+              <div >0 = poor quality, 5 = amazing</div>
+            </b-form-group>
 
-          <b-button class="mt-4"
-                    @click="showCreateModal = !showCreateModal"
-                    variant="primary"
-                    v-if="$cookies.isKey('token')"
-          >
-            Add New Venue</b-button>
+          </div>
 
           <b-modal v-model="showCreateModal"
                    title="Create new venue"
@@ -76,7 +86,7 @@
 
         </b-col>
 
-        <b-col cols="10">
+        <b-col cols="9">
           <b-row v-for="venue of venues" class="mt-3" :key="venue.venue_id">
             <VenueCard :venue="venue"> </VenueCard>
           </b-row>
@@ -138,8 +148,10 @@
             title: 'CostRating: Lowest to Highest'
           }
         ],
+        selectedDir: null,
 
-        selectedDir: null
+        minStarRating: 1,
+        maxCostRating: 4
       }
     },
 
@@ -172,6 +184,10 @@
 
             // setup data
             for (const venue of venues) {
+              if (!venue.meanStarRating) {
+                venue.meanStarRating = 3;
+              }
+
               for (const category of categories) {
                 if (venue.categoryId === category.categoryId) {
                   venue.categoryName = category.categoryName;
@@ -201,10 +217,14 @@
           params += `q=${this.searchString}&`;
         }
 
-        if (this.selectedDir) {
-          const option = this.dirOptions.find((option) => { return option.value === this.selectedDir });
-          params += `sortBy=${option.sortBy}&reverseSort=${option.reverse}`;
-        }
+        // sort by
+        const option = this.dirOptions.find((option) => { return option.value === this.selectedDir });
+        params += `sortBy=${option.sortBy}&reverseSort=${option.reverse}&`;
+
+
+        // min star rating
+        params += `minStarRating=${this.minStarRating}&`;
+
 
         return this.axios.get(`${this.$baseUrl}/venues${params}`)
           .then((res) => {
@@ -269,6 +289,11 @@
 
       onSortByChange(value) {
         this.selectedDir = value;
+        this.getVenueData(this.selectedCity);
+      },
+
+      onMinStarRatingChange(rating) {
+        this.minStarRating = rating;
         this.getVenueData(this.selectedCity);
       }
     }
