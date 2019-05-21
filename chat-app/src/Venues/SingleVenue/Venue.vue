@@ -9,6 +9,10 @@
       <b-row>
         <b-col cols="6">
           <VenueDetails :venue="venue" class="mt-4"/>
+          <b-button class="mt-4"
+                    variant="primary"
+                    @click="showEditModal = !showEditModal"
+          > Edit Venue </b-button>
         </b-col>
 
         <b-col cols="6">
@@ -16,6 +20,18 @@
         </b-col>
       </b-row>
     </b-container>
+
+    <b-modal v-model="showEditModal"
+             title="Edit Venue"
+             hide-footer
+    >
+      <CreateVenue v-if="$cookies.isKey('token')"
+                   @close-reload="onVenueEdited"
+                   :venue="venue"
+                   :editMode="true"
+                   :venueId="$route.params.venueId"
+      />
+    </b-modal>
 
   </div>
 
@@ -25,13 +41,15 @@
   import VenueDetails from './VenueDetails';
   import VenuePhotos from './VenuePhotos';
   import authUtils from '../../utils/authUtils';
+  import CreateVenue from '../CreateVenue';
 
   export default {
     name: "Venue",
 
     components: {
       VenueDetails,
-      VenuePhotos
+      VenuePhotos,
+      CreateVenue
     },
 
     data() {
@@ -39,7 +57,8 @@
         venue: null,
         error: '',
         errorFlag: false,
-        isAdmin: false
+        isAdmin: false,
+        showEditModal: false
       }
     },
 
@@ -48,8 +67,12 @@
     },
 
     methods: {
+      onVenueEdited() {
+        this.showEditModal = true;
+        this.refreshData();
+      },
+
       refreshData() {
-        console.log('refreshing');
         return this.getVenueData()
           .then((venue) => {
             this.venue = venue;

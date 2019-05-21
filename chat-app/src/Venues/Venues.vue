@@ -15,9 +15,9 @@
                             :value="city"
                             :key="city"
                             v-on:change="onCityChange"
-                            >
+              >
                 {{ city }}
-                </b-form-radio>
+              </b-form-radio>
             </b-form-group>
 
             <b-form-checkbox v-model="adminOnly"
@@ -28,11 +28,19 @@
             </b-form-checkbox>
           </div>
 
-          <CreateVenue class="mt-4"
-                       v-if="$cookies.isKey('token')"
-                       :categories="categories"
-                       @reload-required="refreshData"
-          />
+          <b-button class="mt-4"
+                    @click="showCreateModal = !showCreateModal"
+                    variant="primary">
+            Add New Venue</b-button>
+
+          <b-modal v-model="showCreateModal"
+                   title="Create new venue"
+                   hide-footer
+          >
+            <CreateVenue v-if="$cookies.isKey('token')"
+                         @close-reload="onVenueCreated"
+            />
+          </b-modal>
 
         </b-col>
 
@@ -68,7 +76,8 @@
         cities: ['All cities'],
         selectedCity: 'All cities',
         adminOnly: false,
-        categories: []
+        categories: [],
+        showCreateModal: false
       }
     },
 
@@ -77,6 +86,11 @@
     },
 
     methods: {
+      onVenueCreated() {
+        this.showCreateModal = false;
+        this.refreshData();
+      },
+
       refreshData() {
         return Promise.all([
           this.getVenueData(),

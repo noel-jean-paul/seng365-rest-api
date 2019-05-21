@@ -59,8 +59,6 @@
 
     methods: {
       upload() {
-        console.log('file size: ', this.file);
-
         const bodyFormData = new FormData();
         bodyFormData.set('description', '');
         bodyFormData.set('makePrimary', this.makePrimary);

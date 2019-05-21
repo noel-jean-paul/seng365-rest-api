@@ -4,12 +4,6 @@
       {{ error }}
     </div>
 
-    <b-button @click="showModal = !showModal" variant="primary">Add New Venue</b-button>
-
-    <b-modal v-model="showModal"
-             title="Create new venue"
-             hide-footer
-    >
       <b-container>
         <b-form @submit.stop.prevent="onSubmit">
           <b-form-group label="Venue Name">
@@ -71,6 +65,7 @@
                           placeholder="Latitude"
                           required
                           type="number"
+                          :step="0.000000000000001"
             ></b-form-input>
           </b-form-group>
 
@@ -83,6 +78,7 @@
                           placeholder="Longitude"
                           required
                           type="number"
+                          :step="0.000000000000001"
             ></b-form-input>
           </b-form-group>
 
@@ -94,7 +90,6 @@
         </div>
 
       </b-container>
-    </b-modal>
   </div>
 </template>
 
@@ -106,27 +101,31 @@
 
     data() {
       return {
-        showModal: false,
-        name: '',
-        category: '',
+        name: this.venue ? this.venue.venueName : '',
+        category: this.venue ? this.venue.category.categoryId : '',
         categories: [],
         catOptions: [],
-        sDesc: '',
-        lDesc: '',
-        city: '',
-        address: '',
-        lat: '',
-        long: '',
+        sDesc: this.venue ? this.venue.shortDescription : '',
+        lDesc: this.venue ? this.venue.longDescription : '',
+        city: this.venue ? this.venue.city : '',
+        address: this.venue ? this.venue.address : '',
+        lat: this.venue ? this.venue.latitude : '',
+        long: this.venue ? this.venue.longitude : '',
         error: '',
         errorFlag: false,
         formError: false
       }
     },
 
+    props: {
+      venue: Object,
+      venueId: String,
+      editMode: Boolean
+    },
+
     mounted() {
       this.getCategories()
         .then(() => {
-          console.log('cats: ', this.categories);
           const catOptions = [];
           for (const category of this.categories) {
             const option = {
@@ -136,7 +135,6 @@
             catOptions.push(option);
           }
           this.catOptions = catOptions;
-          console.log('opts: ', this.catOptions);
         });
     },
 
@@ -144,7 +142,9 @@
       onSubmit() {
         this.formError = false;
         if (this.submissionValid()) {
-          const url = `${this.$baseUrl}/venues`;
+
+          const url = `${this.$baseUrl}/venues` + this.editMode ? `/${this.venueId}` : '';
+
           const data = {
             venueName: this.name,
             categoryId: this.category,
@@ -157,7 +157,7 @@
           };
 
           this.axios({
-            method: 'post',
+            method: this.editMode ? 'put' : 'post',
             url: url,
             data: data,
             headers: {
@@ -165,9 +165,7 @@
             }
           })
             .then(() => {
-              console.log('req completed');
-              this.$emit('reload-required');
-              this.showModal = false;
+              this.$emit('close-reload');
             })
         } else {
           this.formError = true;
