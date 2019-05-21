@@ -60,7 +60,7 @@
         this.$cookies.remove('token');
         setTimeout(() => {
           this.$router.push({name: 'home'})
-        }, 10);
+        }, 100);
       },
 
       onProfileClick() {

@@ -1,11 +1,5 @@
 <template>
   <div>
-    <b-button @click="showModal = !showModal">Upload Photo</b-button>
-
-    <b-modal v-model="showModal"
-             title="Upload Photo"
-             hide-footer
-    >
       <b-container>
 
         <b-form-file
@@ -14,14 +8,6 @@
           placeholder="Choose a file..."
           accept="image/jpeg, image/png"
         ></b-form-file>
-
-        <b-form-checkbox v-if="hasPhotos"
-          v-model="makePrimary"
-        >
-          Make primary photo
-        </b-form-checkbox>
-
-
 
         <b-button class="mt-2"
                   variant="primary"
@@ -32,60 +18,49 @@
         <div class="text-danger" v-if="file ? file.size > 20 * mbToByteFactor : false">
           File is more than 20mb big
         </div>
-
       </b-container>
-    </b-modal>
   </div>
 </template>
 
 <script>
-  import authUtils from '../../utils/authUtils';
+  import authUtils from '../utils/authUtils';
 
   export default {
-    name: "PhotoUpload",
+    name: "ProfilePicUpload",
 
     data() {
       return {
         showModal: false,
         file: null,
-        makePrimary: false,
         mbToByteFactor: 1000000
       }
     },
 
-    props: {
-      hasPhotos: Boolean
-    },
-
     methods: {
       upload() {
-        const bodyFormData = new FormData();
-        bodyFormData.set('description', '');
-        bodyFormData.set('makePrimary', this.makePrimary);
-        bodyFormData.append('photo', this.file);
-
         const baseUrl = this.$baseUrl;
-        const venueId = this.$route.params.venueId;
+        const userId = this.$route.params.userId;
 
         if (this.file !== null) {
+          console.log('file', this.file);
+          const fileType = this.file.type;
+
           return this.axios({
-            method: 'post',
-            url: `${baseUrl}/venues/${venueId}/photos`,
-            data: bodyFormData,
+            method: 'put',
+            url: `${baseUrl}/users/${userId}/photo`,
+            data: this.file,
             headers: {
-              'Content-Type': 'multipart/form-data',
+              'Content-Type': fileType,
               'X-Authorization': authUtils.getCookie(this)
             }
           })
 
             .then(() => {
               this.$emit('upload');
-              this.showModal = false;
-              this.file = null;
             })
-            .catch((response) => {
+            .catch((error) => {
               //handle error
-              console.log(response);
+              console.log(error);
             });
         }
 

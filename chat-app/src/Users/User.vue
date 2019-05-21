@@ -4,10 +4,13 @@
       <b-card
         no-body
         style="max-width: 540px"
-        img-src="https://placekitten.com/380/200"
-        img-alt="Image"
-        img-top
       >
+        <b-card-img :src="`${$baseUrl}/users/${$route.params.userId}/photo?x=${photoQuery}`"
+                    alt="Profile Picture"
+        >
+
+        </b-card-img>
+
         <b-card-body>
           <b-card-title>{{ user.username }}</b-card-title>
         </b-card-body>
@@ -25,10 +28,19 @@
           <b-button variant="primary" @click="onEditProfile">
             Edit Profile
           </b-button>
+
+          <b-button @click="showUploadModal = !showUploadModal">Upload Profile Picture</b-button>
         </b-card-footer>
       </b-card>
 
     </b-container>
+
+    <b-modal v-model="showUploadModal"
+             title="Upload Profile Pic"
+             hide-footer
+    >
+      <ProfilePicUpload @upload="onUpload"/>
+    </b-modal>
 
     <b-modal v-model="showEditModal"
              title="Edit Profile"
@@ -36,7 +48,7 @@
     >
       <EditProfile @close-reload="onSave"
                    :user="user"
-                    :userId="$route.params.userId"
+                   :userId="$route.params.userId"
       />
     </b-modal>
 
@@ -47,20 +59,24 @@
   import InfoRow from '../display/InfoRow';
   import authUtils from '../utils/authUtils';
   import EditProfile from './EditProfile';
+  import ProfilePicUpload from './ProfilePicUpload';
 
   export default {
     name: "User",
 
     components: {
       InfoRow,
-      EditProfile
+      EditProfile,
+      ProfilePicUpload
     },
 
     data() {
       return {
         user: null,
         isAdmin: false,
-        showEditModal: false
+        showEditModal: false,
+        showUploadModal: false,
+        photoQuery: true
       }
     },
 
@@ -71,11 +87,13 @@
       this.getUser();
     },
 
-    computed: {
-
-    },
-
     methods: {
+      onUpload() {
+        console.log('onUpload');
+        this.showUploadModal = false;
+        this.photoQuery = !this.photoQuery;
+      },
+
       onSave() {
         this.showEditModal = false;
         this.getUser();
