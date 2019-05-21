@@ -9,14 +9,14 @@
         <b-col cols="2">
 
           <div class="mt-4">
-            <b-form-group label="Venue Name">
+            <b-form-group label="Venue Name" label-class="font-weight-bold">
             <b-form-input v-model="searchString"
                           placeholder="Enter venue name"
                           v-on:change="onSearchChange"
             ></b-form-input>
             </b-form-group>
 
-            <b-form-group label="City">
+            <b-form-group label="City" label-class="font-weight-bold">
               <b-form-radio v-for="city of cities"
                             v-model="selectedCity"
                             :value="city"
@@ -27,14 +27,16 @@
               </b-form-radio>
             </b-form-group>
 
+            <b-form-group label="Admin" label-class="font-weight-bold">
             <b-form-checkbox v-model="adminOnly"
                              v-on:change="onAdminChange"
                              v-if="$cookies.isKey('token')"
             >
               Show only my venues
             </b-form-checkbox>
+            </b-form-group>
 
-            <b-form-group label="Category" class="mt-2">
+            <b-form-group label="Category" class="mt-2" label-class="font-weight-bold">
               <b-form-radio v-for="category of categories"
                             v-model="selectedCategory"
                             :value="category.categoryId"
