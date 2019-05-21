@@ -14,7 +14,9 @@
 
         <b-list-group flush>
           <b-list-group-item><InfoRow title="Username:" :label-width=3> {{ user.username }}</InfoRow></b-list-group-item>
-          <b-list-group-item><InfoRow title="Email:" :label-width=3> {{ user.email }}</InfoRow></b-list-group-item>
+          <b-list-group-item v-if="isAdmin">
+            <InfoRow title="Email:" :label-width=3> {{ user.email }}</InfoRow>
+          </b-list-group-item>
           <b-list-group-item><InfoRow title="Given Name" :label-width=3> {{ user.givenName }}</InfoRow></b-list-group-item>
           <b-list-group-item><InfoRow title="Family Name" :label-width=3> {{ user.familyName }}</InfoRow></b-list-group-item>
         </b-list-group>
@@ -39,11 +41,15 @@
 
     data() {
       return {
-        user: null
+        user: null,
+        isAdmin: false
       }
     },
 
     mounted() {
+      if (this.$route.params.userId === authUtils.getAuthedUserId(this)) {
+        this.isAdmin = true;
+      }
       this.getUser();
     },
 
