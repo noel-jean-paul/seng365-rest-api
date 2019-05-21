@@ -14,6 +14,12 @@
                     @click="showEditModal = !showEditModal"
                     v-if="isAdmin"
           > Edit Venue </b-button>
+
+          <b-button class="mt-4"
+                    variant="secondary"
+                    @click="showReviewModal = !showReviewModal"
+                    v-if="reviewable"
+          > Add Review </b-button>
         </b-col>
 
         <b-col cols="6">
@@ -58,7 +64,9 @@
         error: '',
         errorFlag: false,
         isAdmin: false,
-        showEditModal: false
+        showEditModal: false,
+        reviewable: false,
+        reviews: []
       }
     },
 
@@ -77,17 +85,28 @@
           .then((venue) => {
             this.venue = venue;
             this.isAdmin = authUtils.isAuthenticated(this, venue.admin.userId);
-          });
+
+            // must not be admin, must be authenticated, must not have posted a review for the venue
+            this.reviewable = !this.isAdmin && this.$cookies.isKey('token') && !this.userHasReviewedVenue();
+          })
+      },
+
+      userHasReviewedVenue() {
+        const hasReviewed = this.reviews.find((review) =>
+        { return review.reviewAuthor.userId === authUtils.getAuthedUserId(this)});
+        return hasReviewed;
       },
 
       getVenueData() {
         return Promise.all([
           this.getAllVenues(),
-          this.getVenue()
+          this.getVenue(),
+          this.getReviews()
         ])
           .then((result) =>{
             const venues = result[0];
             let singleVenue = result[1];
+            this.reviews = result[2];
 
             for (const venue of venues) {
               const id = venue.venueId.toString();
@@ -122,6 +141,13 @@
             this.error = error;
             this.errorFlag = true;
           });
+      },
+
+      getReviews() {
+        return this.axios.get(`${this.$baseUrl}/venues/${this.$route.params.venueId}/reviews`)
+          .then((res) => {
+            return res.data;
+          })
       }
     }
   }
