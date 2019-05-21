@@ -21,36 +21,58 @@
           <b-list-group-item><InfoRow title="Family Name" :label-width=3> {{ user.familyName }}</InfoRow></b-list-group-item>
         </b-list-group>
 
-        <b-card-footer>This is a footer</b-card-footer>
+        <b-card-footer v-if="isAdmin">
+          <b-button variant="primary" @click="onEditProfile">
+            Edit Profile
+          </b-button>
+        </b-card-footer>
       </b-card>
 
     </b-container>
+
+    <b-modal v-model="showEditModal"
+             title="Edit Profile"
+             hide-footer
+    >
+      <EditProfile @close-reload="getUser"
+                   :user="user"
+                    :userId="$route.params.userId"
+      />
+    </b-modal>
+
   </div>
 </template>
 
 <script>
   import InfoRow from '../display/InfoRow';
   import authUtils from '../utils/authUtils';
+  import EditProfile from './EditProfile';
 
   export default {
     name: "User",
 
     components: {
-      InfoRow
+      InfoRow,
+      EditProfile
     },
 
     data() {
       return {
         user: null,
-        isAdmin: false
+        isAdmin: false,
+        showEditModal: false
       }
     },
 
     mounted() {
-      if (this.$route.params.userId === authUtils.getAuthedUserId(this)) {
+      if (parseInt(this.$route.params.userId) === authUtils.getAuthedUserId(this)) {
         this.isAdmin = true;
       }
       this.getUser();
+    },
+
+    computed: {
+
     },
 
     methods: {
@@ -65,6 +87,10 @@
           .then((res) => {
             this.user = res.data;
           });
+      },
+
+      onEditProfile() {
+        this.showEditModal = true;
       }
     }
   }

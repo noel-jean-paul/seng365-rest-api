@@ -33,7 +33,7 @@
           <div>0 = free, 4 = expensive</div>
         </b-form-group>
 
-        <b-button type="submit" variant="primary">Submit</b-button>
+        <b-button type="submit" variant="primary">Add review</b-button>
       </b-form>
     </b-container>
   </div>

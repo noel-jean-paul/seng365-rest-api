@@ -89,7 +89,7 @@
         ></b-form-input>
       </b-form-group>
 
-      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button type="submit" variant="primary">Register</b-button>
 
       <div class="text-danger" v-if="duplicateEmail">
         Email or username is already in use
