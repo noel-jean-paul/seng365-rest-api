@@ -1,6 +1,10 @@
 <template>
   <div>
-    <b-button @click="showModal = !showModal">Add New Venue</b-button>
+    <div v-if="errorFlag" style="color: red;">
+      {{ error }}
+    </div>
+
+    <b-button @click="showModal = !showModal" variant="primary">Add New Venue</b-button>
 
     <b-modal v-model="showModal"
              title="Create new venue"
@@ -38,7 +42,10 @@
             ></b-form-textarea>
           </b-form-group>
 
-          <b-form-group label="City">
+          <b-form-group label="City"
+                        :invalid-feedback="invalidCityFeedback"
+                        :state="cityState"
+          >
             <b-form-input v-model="city"
                           trim
                           placeholder="City"
@@ -63,6 +70,7 @@
                           trim
                           placeholder="Latitude"
                           required
+                          type="number"
             ></b-form-input>
           </b-form-group>
 
@@ -74,11 +82,16 @@
                           trim
                           placeholder="Longitude"
                           required
+                          type="number"
             ></b-form-input>
           </b-form-group>
 
           <b-button type="submit" variant="primary">Submit</b-button>
         </b-form>
+
+        <div class="text-danger" v-if="formError">
+          Form contains errors
+        </div>
 
       </b-container>
     </b-modal>
@@ -86,6 +99,8 @@
 </template>
 
 <script>
+  import authUtils from '../utils/authUtils';
+
   export default {
     name: "CreateVenue",
 
@@ -94,45 +109,101 @@
         showModal: false,
         name: '',
         category: '',
+        categories: [],
         catOptions: [],
         sDesc: '',
         lDesc: '',
         city: '',
         address: '',
         lat: '',
-        long: ''
+        long: '',
+        error: '',
+        errorFlag: false,
+        formError: false
       }
-    },
-
-    props: {
-      categories: Array
     },
 
     mounted() {
-      console.log(this.categories);
-      for (const category of this.categories) {
-        const option = {
-          value: category.categoryId,
-          text: category.categoryName
-        };
-        this.catOptions.push(option);
-      }
-
-      console.log(this.catOptions);
+      this.getCategories()
+        .then(() => {
+          console.log('cats: ', this.categories);
+          const catOptions = [];
+          for (const category of this.categories) {
+            const option = {
+              value: category.categoryId,
+              text: category.categoryName
+            };
+            catOptions.push(option);
+          }
+          this.catOptions = catOptions;
+          console.log('opts: ', this.catOptions);
+        });
     },
 
     methods: {
       onSubmit() {
-        console.log('submitted');
+        this.formError = false;
+        if (this.submissionValid()) {
+          const url = `${this.$baseUrl}/venues`;
+          const data = {
+            venueName: this.name,
+            categoryId: this.category,
+            city: this.city,
+            shortDescription: this.sDesc,
+            longDescription: this.lDesc,
+            address: this.address,
+            latitude: parseInt(this.lat),
+            longitude: parseInt(this.long)
+          };
+
+          this.axios({
+            method: 'post',
+            url: url,
+            data: data,
+            headers: {
+              'X-Authorization': authUtils.getCookie(this)
+            }
+          })
+            .then(() => {
+              console.log('req completed');
+              this.$emit('reload-required');
+              this.showModal = false;
+            })
+        } else {
+          this.formError = true;
+        }
       },
+
+      submissionValid() {
+        const validationResults = [
+          this.cityState
+        ];
+
+        for (const result of validationResults) {
+          if (!result) {
+            return false;
+          }
+        }
+
+        return true;
+      },
+
+      getCategories() {
+        return this.axios.get(this.$baseUrl + '/categories')
+          .then((res) => {
+            this.categories = res.data;
+            return res.data;
+          })
+          .catch((error) => {
+            this.error = error;
+            this.errorFlag = true;
+          });
+      }
     },
 
     computed: {
       invalidLatFeedback() {
-        const lat = parseInt(this.lat);
-        if (isNaN(lat)) {
-          return 'Latitude must be a number';
-        } else if (lat < -90 || lat > 90) {
+        if (this.lat < -90 || this.lat > 90) {
           return 'Latitude must be between -90 and +90'
         } else {
           return '';
@@ -140,19 +211,11 @@
       },
 
       latState() {
-        const lat = parseInt(this.lat);
-        if (isNaN(lat)) {
-          return false;
-        } else {
-          return lat >= -90 && lat <= 90;
-        }
+        return this.lat >= -90 && this.lat <= 90;
       },
 
       invalidLongFeedback() {
-        const long = parseInt(this.long);
-        if (isNaN(long)) {
-          return 'Longitude must be a number';
-        } else if (long < -180 || long > 180) {
+       if (this.long < -180 || this.long > 180) {
           return 'Longitude must be between -180 and +180'
         } else {
           return '';
@@ -160,12 +223,20 @@
       },
 
       longState() {
-        const long = parseInt(this.long);
-        if (isNaN(long)) {
-          return false;
+        return this.long >= -180 && this.long <= 180;
+      },
+
+      invalidCityFeedback() {
+        if (!isNaN(this.city)) {  // if number = false so !
+          return 'City must be a string';
         } else {
-          return long >= -180 && long <= 180;
+          return '';
         }
+      },
+
+      cityState() {
+        // returns false if a number, true if string
+        return isNaN(this.city);
       }
     }
 

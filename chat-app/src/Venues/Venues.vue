@@ -31,6 +31,7 @@
           <CreateVenue class="mt-4"
                        v-if="$cookies.isKey('token')"
                        :categories="categories"
+                       @reload-required="refreshData"
           />
 
         </b-col>
@@ -72,13 +73,17 @@
     },
 
     mounted: function() {
-      Promise.all([
-        this.getVenueData(),
-        this.getCities()
-      ]);
+      this.refreshData();
     },
 
     methods: {
+      refreshData() {
+        return Promise.all([
+          this.getVenueData(),
+          this.getCities()
+        ]);
+      },
+
       getVenueData: function(city) {
         return Promise.all([
           this.getVenues(city),

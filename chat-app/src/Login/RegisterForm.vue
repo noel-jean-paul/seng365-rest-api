@@ -95,6 +95,10 @@
         Email or username is already in use
       </div>
 
+      <div class="text-danger" v-if="formError">
+        Form contains errors
+      </div>
+
 
     </b-form>
 </template>
@@ -113,13 +117,15 @@
         username: '',
         password: '',
         confirmPassword: '',
-        duplicateEmail: false
+        duplicateEmail: false,
+        formError: false
       }
     },
 
     methods: {
       onSubmit() {
         this.duplicateEmail = false;
+        this.formError = false;
 
         if (this.submissionValid()) {
           this.createUser()
@@ -136,6 +142,8 @@
               console.log('400: duplicate email or username');
               this.duplicateEmail = true;
             });
+        } else {
+          this.formError = true;
         }
       },
 
