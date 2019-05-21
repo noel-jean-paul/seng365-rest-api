@@ -98,6 +98,16 @@
         </b-col>
 
         <b-col cols="9">
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="numVenues"
+            :per-page="perPage"
+            aria-controls="my-table"
+            @change="onPageChange"
+          ></b-pagination>
+          <strong> Displaying venues {{ (currentPage - 1) * perPage + 1 }} -
+            {{ Math.min((currentPage * perPage), numVenues) }}</strong>
+
           <b-row v-for="venue of venues" class="mt-3" :key="venue.venue_id">
             <VenueCard :venue="venue"> </VenueCard>
           </b-row>
@@ -176,7 +186,11 @@
         myLongitude: null,
 
         minStarRating: 1,
-        maxCostRating: 4
+        maxCostRating: 4,
+
+        numVenues: null,
+        currentPage: 1,
+        perPage:10
       }
     },
 
@@ -186,6 +200,11 @@
     },
 
     methods: {
+      onPageChange(page) {
+        this.currentPage = page;
+        this.refreshData();
+      },
+
       onVenueCreated() {
         this.showCreateModal = false;
         this.refreshData();
@@ -194,8 +213,12 @@
       refreshData() {
         return Promise.all([
           this.getVenueData(),
-          this.getCities()
-        ]);
+          this.getCities(),
+          this.getVenues(this.city, false)  //  don't paginate to get total number of venues
+        ])
+          .then((result) => {
+            this.numVenues = result[2].length
+          });
       },
 
       getVenueData: function(city) {
@@ -224,7 +247,7 @@
           });
       },
 
-      getVenues: function(city) {
+      getVenues: function(city, paginate=true) {
         let params = '?';
         if (city !== undefined && city !== "All cities") {
           params += `city=${city}&`;
@@ -258,6 +281,12 @@
         // max cost rating
         params += `maxCostRating=${this.maxCostRating}&`;
 
+
+        // pagination
+        if (paginate) {
+          const startIndex = this.perPage * (this.currentPage - 1); // page num starts at 1
+          params += `count=${this.perPage}&startIndex=${startIndex}&`
+        }
 
         return this.axios.get(`${this.$baseUrl}/venues${params}`)
           .then((res) => {
@@ -344,22 +373,18 @@
       },
 
       getLocation() {
-        console.log('nav', navigator);
         return new Promise(resolve => {
           navigator.geolocation.getCurrentPosition((position) =>
             this.setPosition(position, resolve));
         }, reject => {
-
+          console.log('rejected');
         });
       },
 
       setPosition(position, resolve) {
-        console.log(position.coords);
         this.myLatitude = position.coords.latitude;
         this.myLongitude = position.coords.longitude;
         resolve();
-
-        console.log(this.myLatitude, this.myLongitude);
       }
     }
   }
