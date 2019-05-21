@@ -64,6 +64,10 @@
               </b-form-radio>
             </b-form-group>
 
+            <div class="text-info mb-2" v-if="!displayDirOptions">
+              Geolocation disabled. Enable in browser settings
+            </div>
+
             <b-form-group :label="`Min Star Rating: ${minStarRating}`"  label-class="font-weight-bold">
               <b-form-input v-model="minStarRating"
                             v-on:change="onMinStarRatingChange"
