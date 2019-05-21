@@ -26,6 +26,18 @@
             >
               Show only my venues
             </b-form-checkbox>
+
+            <b-form-group label="Category" class="mt-2">
+              <b-form-radio v-for="category of categories"
+                            v-model="selectedCategory"
+                            :value="category.categoryId"
+                            :key="category.categoryId"
+                            v-on:change="onCategoryChange"
+              >
+                {{ category.categoryName }}
+              </b-form-radio>
+            </b-form-group>
+
           </div>
 
           <b-button class="mt-4"
@@ -77,7 +89,10 @@
         cities: ['All cities'],
         selectedCity: 'All cities',
         adminOnly: false,
-        categories: [],
+        selectedCategory: 'all',
+        categories: [
+          { categoryName: 'All', categpryId: 'all' }
+        ],
         showCreateModal: false
       }
     },
@@ -131,6 +146,10 @@
           params += `adminId=${authUtils.getAuthedUserId(this)}`;
         }
 
+        if (this.selectedCategory !== 'all') {
+          params += `categoryId=${this.selectedCategory}`
+        }
+
         return this.axios.get(`${this.$baseUrl}/venues${params}`)
           .then((res) => {
             return res.data;
@@ -144,7 +163,7 @@
       getCategories: function() {
         return this.axios.get(this.$baseUrl + '/categories')
           .then((res) => {
-            this.categories = res.data;
+            this.categories = [{ categoryName: 'All', categoryId: 'all' }].concat(res.data);
             return res.data;
           })
           .catch((error) => {
@@ -179,6 +198,11 @@
 
       onAdminChange: function(checked) {
         this.adminOnly = checked;
+        this.getVenueData(this.selectedCity)
+      },
+
+      onCategoryChange(selected) {
+        this.selectedCategory = selected;
         this.getVenueData(this.selectedCity)
       }
     }
