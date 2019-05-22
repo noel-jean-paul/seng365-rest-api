@@ -55,7 +55,7 @@
              hide-footer
     >
       <b-container>
-        <RegisterForm/>
+        <RegisterForm @login="postRegisterLogin"/>
       </b-container>
     </b-modal>
 
@@ -93,6 +93,13 @@
     },
 
     methods: {
+      postRegisterLogin(username, email, password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.login();
+      },
+
       login() {
         this.axios.post(`${this.$baseUrl}/users/login`, {
           username: this.username,

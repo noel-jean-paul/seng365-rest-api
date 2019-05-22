@@ -1,8 +1,8 @@
 {
-  "name": "chat-app",
-  "description": "A simple chat app for Seng365 lab 6",
+  "name": "Vue client",
+  "description": "365 assignment 2",
   "version": "1.0.0",
-  "author": "Noel Bisson <nbi21@uclive.ac.nz>",
+  "author": "Mystery",
   "license": "",
   "private": true,
   "scripts": {

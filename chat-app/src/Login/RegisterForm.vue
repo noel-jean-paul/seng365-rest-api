@@ -134,7 +134,7 @@
               // Set cookie
               authUtils.setCookie(this, response.data.userId, response.data.token);
 
-              this.$router.push({ name: 'venues'});
+              this.$emit('login', this.username, this.email, this.password);
             })
             .catch((error) => {
               // 400 returned

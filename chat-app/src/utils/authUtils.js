@@ -24,7 +24,11 @@ exports.getAuthedUserId = (vue) => {
 };
 
 exports.setCookie = (vue, userId, token) => {
-  vue.$cookies.set('token', {
+  if (vue.$cookies.isKey('token')) {
+    vue.$cookies.remove('token');
+  }
+
+  return vue.$cookies.set('token', {
     token: token,
     userId: userId
   })
