@@ -1,4 +1,4 @@
-# nbi21_client
+# vue_client
 
 > Seng365 assignment 2 client
 
