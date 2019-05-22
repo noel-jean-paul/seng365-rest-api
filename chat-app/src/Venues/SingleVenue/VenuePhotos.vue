@@ -132,6 +132,7 @@
         })
           .then(() => {
             // Reload data from venues
+            this.showPhotoModal = false;
             this.$emit('reload-required');
           })
           .catch((error) => {

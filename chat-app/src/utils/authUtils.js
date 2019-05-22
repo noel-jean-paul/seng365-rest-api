@@ -15,7 +15,6 @@ exports.isAuthenticated = (vue, userId) => {
 };
 
 exports.getAuthedUserId = (vue) => {
-  console.log('vue is', vue);
   if (vue.$cookies.isKey('token')) {
     return vue.$cookies.get('token').userId;
   } else {
