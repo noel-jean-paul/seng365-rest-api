@@ -86,7 +86,7 @@
         isAdmin: false,
         showEditModal: false,
         showUploadModal: false,
-        photoQuery: true,
+        photoQuery: 1,
         hasPhoto: false
       }
     },
@@ -142,7 +142,7 @@
                   this.checkForPhoto()
                     .then((result) => {
                       this.hasPhoto = result;
-                    this.photoQuery = !this.photoQuery;
+                    this.photoQuery += 1;
                     })
                 })
             }
@@ -154,7 +154,7 @@
         this.checkForPhoto()
           .then((result) => {
             this.hasPhoto = result;
-            this.photoQuery = !this.photoQuery;
+            this.photoQuery += 1;
 
           })
       },
